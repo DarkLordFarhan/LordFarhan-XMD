@@ -6,6 +6,6 @@ module.exports = {
     GC_JID: process.env.GC_JID || "LZE4CoZNhLB28z5jtqwNLA",
     DATABASE_URL: process.env.DATABASE_URL,
     BOT_REPO: process.env.BOT_REPO || "https://github.com/DarkLordFarhan/LordFarhan-XMD",
-    WA_CHANNEL: process.env.WA_CHANNEL || "https://whatsapp.com/channel/0029VbCpYtZLtOj5LDuj7Q1p",
+    WA_CHANNEL: process.env.WA_CHANNEL || "https://whatsapp.com/channel/0029Vb8ANT4J93weNOlcux3g",
     MSG_FOOTER: process.env.MSG_FOOTER || "> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ʟᴏʀᴅғᴀʀʜᴀɴ-xᴍᴅ*",
 };
