@@ -1,490 +1,580 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>LordFarhan-XMD | WhatsApp Bot Session Generator</title>
-  <meta name="description" content="LordFarhan-XMD — powerful WhatsApp bot session generator with pair code and QR code login. Fast, secure, and easy to use.">
-  <meta name="theme-color" content="#7c3aed">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="LordFarhan-XMD | WhatsApp Bot">
-  <meta property="og:description" content="Generate your WhatsApp session with LordFarhan-XMD. Supports pair code and QR code login methods.">
-  <meta property="og:image" content="https://files.giftedtech.co.ke/image/u90mimage.jpg">
-  <meta property="og:image:width" content="400">
-  <meta property="og:image:height" content="400">
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="LordFarhan-XMD | WhatsApp Bot">
-  <meta name="twitter:description" content="Generate your WhatsApp session with LordFarhan-XMD.">
-  <meta name="twitter:image" content="https://files.giftedtech.co.ke/image/u90mimage.jpg">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #07070e;
-      color: #f1f1f1;
-      min-height: 100vh;
-      overflow-x: hidden;
-      scrollbar-width: none;
-    }
-    body::-webkit-scrollbar { display: none; }
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>LordFarhan-XMD | Session Generator</title>
+    <meta name="description" content="LordFarhan-XMD — WhatsApp bot session generator. Pair code and QR code login.">
+    <meta name="theme-color" content="#00ff41">
+    <meta property="og:title" content="LordFarhan-XMD | WhatsApp Bot">
+    <meta property="og:description" content="Generate your WhatsApp session with LordFarhan-XMD.">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+      :root {
+        --green: #00ff41;
+        --green-dim: #00cc33;
+        --green-dark: #003b00;
+        --green-glow: rgba(0,255,65,0.18);
+        --bg: #000000;
+        --bg2: #050f05;
+        --text: #c8ffc8;
+        --text-dim: #4a7a4a;
+      }
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: 'Fira Code', 'Share Tech Mono', monospace;
+        background: var(--bg);
+        color: var(--green);
+        min-height: 100vh;
+        overflow-x: hidden;
+        scrollbar-width: thin;
+        scrollbar-color: var(--green-dim) #000;
+      }
+      body::-webkit-scrollbar { width: 4px; }
+      body::-webkit-scrollbar-track { background: #000; }
+      body::-webkit-scrollbar-thumb { background: var(--green-dim); }
 
-    .gradient-text {
-      background: linear-gradient(135deg, #c084fc 0%, #818cf8 50%, #7c3aed 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .gradient-bg { background: linear-gradient(135deg, #7c3aed, #9333ea); }
+      /* Matrix Canvas */
+      #matrix-canvas {
+        position: fixed; top: 0; left: 0;
+        width: 100%; height: 100%;
+        z-index: 0; opacity: 0.07;
+        pointer-events: none;
+      }
 
-    .blob {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(90px);
-      pointer-events: none;
-      z-index: 0;
-      will-change: transform;
-    }
+      /* Scanlines */
+      body::after {
+        content: '';
+        position: fixed; top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0,0,0,0.08) 2px,
+          rgba(0,0,0,0.08) 4px
+        );
+        pointer-events: none;
+        z-index: 9999;
+      }
 
-    @keyframes blobFloat {
-      0%,100% { transform: translate(0,0) scale(1); }
-      50%      { transform: translate(20px, -20px) scale(1.05); }
-    }
+      /* Nav */
+      nav {
+        position: sticky; top: 0; z-index: 100;
+        background: rgba(0,0,0,0.92);
+        border-bottom: 1px solid var(--green-dim);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 0 20px rgba(0,255,65,0.1);
+      }
+      .nav-inner {
+        max-width: 1100px; margin: 0 auto;
+        padding: 0 20px; height: 50px;
+        display: flex; align-items: center; justify-content: space-between;
+      }
+      .logo {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 1rem; color: var(--green);
+        text-decoration: none;
+        display: flex; align-items: center; gap: 8px;
+        text-shadow: 0 0 10px var(--green);
+        letter-spacing: 2px;
+      }
+      .logo-bracket { color: var(--green-dim); }
+      .nav-links { display: flex; align-items: center; gap: 24px; }
+      .nav-link {
+        color: var(--green-dim); text-decoration: none;
+        font-size: 0.75rem; letter-spacing: 1px;
+        text-transform: uppercase;
+        transition: color 0.2s, text-shadow 0.2s;
+        display: flex; align-items: center; gap: 6px;
+      }
+      .nav-link:hover { color: var(--green); text-shadow: 0 0 8px var(--green); }
+      .nav-btn {
+        background: transparent;
+        border: 1px solid var(--green-dim);
+        color: var(--green); padding: 6px 16px;
+        font-family: 'Fira Code', monospace;
+        font-size: 0.7rem; letter-spacing: 1px;
+        text-decoration: none; text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex; align-items: center; gap: 6px;
+      }
+      .nav-btn:hover {
+        background: var(--green-glow);
+        border-color: var(--green);
+        box-shadow: 0 0 12px rgba(0,255,65,0.3);
+      }
+      .menu-btn {
+        display: none; background: none; border: 1px solid var(--green-dim);
+        color: var(--green-dim); padding: 6px 10px; cursor: pointer;
+        font-size: 0.9rem; transition: all 0.2s;
+      }
+      .menu-btn:hover { color: var(--green); border-color: var(--green); }
 
-    .nav-glass {
-      background: rgba(7,7,14,0.85);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 0 0 22px 22px;
-    }
+      /* Sidebar */
+      #sidebar {
+        position: fixed; top: 0; left: 0; height: 100%; width: 260px;
+        background: rgba(0,5,0,0.97);
+        border-right: 1px solid var(--green-dim);
+        z-index: 200; transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        display: flex; flex-direction: column; padding: 20px 0;
+      }
+      #sidebar.open { transform: translateX(0); }
+      .sidebar-header {
+        padding: 10px 20px 20px;
+        border-bottom: 1px solid rgba(0,255,65,0.15);
+        display: flex; justify-content: space-between; align-items: center;
+      }
+      .sidebar-close {
+        background: none; border: none; color: var(--green-dim);
+        font-size: 1rem; cursor: pointer; transition: color 0.2s;
+      }
+      .sidebar-close:hover { color: var(--green); }
+      .sidebar-links { padding: 16px 12px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+      .sidebar-link {
+        display: flex; align-items: center; gap: 10px;
+        padding: 10px 12px; color: var(--text-dim);
+        text-decoration: none; font-size: 0.8rem;
+        letter-spacing: 1px; text-transform: uppercase;
+        border-left: 2px solid transparent;
+        transition: all 0.2s;
+      }
+      .sidebar-link:hover {
+        color: var(--green); border-left-color: var(--green);
+        background: rgba(0,255,65,0.05);
+        text-shadow: 0 0 6px var(--green);
+      }
+      .sidebar-link i { width: 16px; font-size: 0.85rem; }
+      .sidebar-footer {
+        padding: 16px 20px;
+        border-top: 1px solid rgba(0,255,65,0.1);
+        font-size: 0.7rem; color: var(--text-dim);
+      }
+      #overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+        z-index: 150; opacity: 0; pointer-events: none;
+        transition: opacity 0.3s;
+      }
+      #overlay.show { opacity: 1; pointer-events: auto; }
 
-    .nav-link {
-      position: relative;
-      transition: color 0.2s ease;
-    }
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: -2px; left: 0;
-      width: 0; height: 2px;
-      background: linear-gradient(90deg, #c084fc, #7c3aed);
-      transition: width 0.22s ease;
-      border-radius: 2px;
-    }
-    .nav-link:hover { color: #c084fc; }
-    .nav-link:hover::after { width: 100%; }
+      /* Hero */
+      .hero {
+        position: relative; z-index: 10;
+        min-height: calc(100vh - 50px);
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        text-align: center; padding: 60px 20px 40px;
+      }
+      .terminal-badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        border: 1px solid var(--green-dim);
+        padding: 5px 14px; font-size: 0.7rem;
+        letter-spacing: 2px; text-transform: uppercase;
+        color: var(--green-dim); margin-bottom: 28px;
+        animation: pulse-border 2s ease-in-out infinite;
+      }
+      @keyframes pulse-border {
+        0%,100% { border-color: var(--green-dim); box-shadow: none; }
+        50% { border-color: var(--green); box-shadow: 0 0 12px rgba(0,255,65,0.2); }
+      }
+      .status-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 8px var(--green);
+        animation: blink 1.2s step-end infinite;
+      }
+      @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
 
-    .sidebar-link {
-      display: flex; align-items: center; gap: 12px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      color: #9ca3af;
-      text-decoration: none;
-      font-size: 0.875rem;
-      font-weight: 500;
-      transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
-    }
-    .sidebar-link:hover {
-      background: rgba(124,58,237,0.12);
-      color: #c084fc;
-      transform: translateX(4px);
-    }
-    .sidebar-link i { width: 18px; text-align: center; font-size: 0.9rem; }
+      .ascii-title {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: clamp(1.6rem, 5vw, 3.2rem);
+        color: var(--green);
+        text-shadow: 0 0 20px rgba(0,255,65,0.5), 0 0 40px rgba(0,255,65,0.2);
+        letter-spacing: 4px;
+        margin-bottom: 8px;
+        animation: glitch 4s infinite;
+      }
+      @keyframes glitch {
+        0%,96%,100% { text-shadow: 0 0 20px rgba(0,255,65,0.5); transform: none; }
+        97% { text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; transform: skewX(-1deg); }
+        98% { text-shadow: 2px 0 #ff0000, -2px 0 #00ffff; transform: skewX(1deg); }
+        99% { text-shadow: 0 0 20px rgba(0,255,65,0.5); transform: none; }
+      }
+      .ascii-sub {
+        font-size: 0.75rem; color: var(--green-dim);
+        letter-spacing: 6px; text-transform: uppercase;
+        margin-bottom: 32px;
+      }
+      .hero-desc {
+        color: var(--text-dim); font-size: 0.85rem;
+        max-width: 500px; margin: 0 auto 36px;
+        line-height: 1.8;
+      }
+      .hero-desc span { color: var(--green); }
 
-    #sidebar {
-      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-    }
-    #sidebarOverlay { transition: opacity 0.3s ease; }
+      .btn-group { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 60px; }
+      .btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 12px 28px; font-family: 'Fira Code', monospace;
+        font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase;
+        text-decoration: none; cursor: pointer; border: none;
+        transition: all 0.2s; position: relative; overflow: hidden;
+      }
+      .btn-primary {
+        background: var(--green); color: #000; font-weight: 700;
+        box-shadow: 0 0 20px rgba(0,255,65,0.3);
+      }
+      .btn-primary:hover {
+        background: #00ff00;
+        box-shadow: 0 0 30px rgba(0,255,65,0.6);
+        transform: translateY(-2px);
+      }
+      .btn-outline {
+        background: transparent; color: var(--green);
+        border: 1px solid var(--green-dim);
+      }
+      .btn-outline:hover {
+        border-color: var(--green); background: var(--green-glow);
+        box-shadow: 0 0 16px rgba(0,255,65,0.2);
+        transform: translateY(-2px);
+      }
 
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 11px 28px;
-      border-radius: 12px;
-      font-weight: 600; font-size: 0.875rem;
-      text-decoration: none;
-      cursor: pointer; border: none;
-      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, opacity 0.18s ease;
-      will-change: transform;
-    }
-    .btn:active { transform: scale(0.97) !important; }
-    .btn-primary { background: linear-gradient(135deg, #7c3aed, #9333ea); color: #fff; }
-    .btn-primary:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 30px rgba(124,58,237,0.45); }
-    .btn-ghost { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; }
-    .btn-ghost:hover { transform: translateY(-3px) scale(1.02); background: rgba(255,255,255,0.1); box-shadow: 0 10px 24px rgba(0,0,0,0.3); }
+      /* Stats */
+      .stats {
+        display: grid; grid-template-columns: repeat(3,1fr);
+        gap: 12px; max-width: 480px; width: 100%;
+      }
+      .stat {
+        border: 1px solid rgba(0,255,65,0.15);
+        padding: 14px 10px; text-align: center;
+        background: rgba(0,255,65,0.02);
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+      .stat:hover {
+        border-color: rgba(0,255,65,0.4);
+        box-shadow: 0 0 12px rgba(0,255,65,0.08);
+      }
+      .stat-val { font-size: 1.4rem; font-weight: 700; color: var(--green); text-shadow: 0 0 10px rgba(0,255,65,0.4); }
+      .stat-label { font-size: 0.65rem; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
 
-    .icon-animated {
-      display: inline-flex; align-items: center; justify-content: center;
-      transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    .btn:hover .icon-animated { transform: scale(1.25) rotate(-8deg); }
+      /* Divider */
+      .divider {
+        height: 1px; width: 100%;
+        background: linear-gradient(90deg, transparent, var(--green-dim), transparent);
+        position: relative; z-index: 10;
+      }
 
-    .feature-card {
-      background: rgba(255,255,255,0.025);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 18px;
-      padding: 28px;
-      text-decoration: none;
-      color: inherit;
-      display: block;
-      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
-    }
-    .feature-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 22px 48px rgba(124,58,237,0.18);
-      border-color: rgba(192,132,252,0.25);
-      background: rgba(255,255,255,0.04);
-    }
-    .feature-card .card-icon {
-      width: 48px; height: 48px;
-      background: rgba(124,58,237,0.15);
-      border: 1px solid rgba(192,132,252,0.15);
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 18px;
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), background 0.25s ease;
-    }
-    .feature-card:hover .card-icon {
-      transform: scale(1.15) rotate(-6deg);
-      background: rgba(124,58,237,0.25);
-    }
-    .feature-card .card-icon i { color: #c084fc; font-size: 1.1rem; }
+      /* Features */
+      .section { position: relative; z-index: 10; padding: 80px 20px; }
+      .section-inner { max-width: 1100px; margin: 0 auto; }
+      .section-title {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 1.4rem; color: var(--green);
+        text-shadow: 0 0 10px rgba(0,255,65,0.3);
+        letter-spacing: 3px; text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .section-title::before { content: '> '; color: var(--green-dim); }
+      .section-sub { font-size: 0.75rem; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 40px; }
 
-    .social-icon {
-      width: 36px; height: 36px;
-      border-radius: 9px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      display: flex; align-items: center; justify-content: center;
-      color: #6b7280;
-      font-size: 0.9rem;
-      text-decoration: none;
-      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-    }
-    .social-icon:hover { background: rgba(124,58,237,0.2); color: #c084fc; transform: translateY(-3px); }
+      .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+      .feature-card {
+        border: 1px solid rgba(0,255,65,0.12);
+        padding: 24px; background: rgba(0,255,65,0.02);
+        text-decoration: none; color: inherit;
+        display: block; transition: all 0.25s;
+        position: relative; overflow: hidden;
+      }
+      .feature-card::before {
+        content: ''; position: absolute; top: 0; left: 0;
+        width: 3px; height: 0; background: var(--green);
+        transition: height 0.3s ease;
+      }
+      .feature-card:hover::before { height: 100%; }
+      .feature-card:hover {
+        border-color: rgba(0,255,65,0.35);
+        box-shadow: 0 0 24px rgba(0,255,65,0.08);
+        background: rgba(0,255,65,0.04);
+        transform: translateY(-4px);
+      }
+      .card-icon {
+        font-size: 1.2rem; color: var(--green);
+        margin-bottom: 14px;
+        text-shadow: 0 0 8px rgba(0,255,65,0.5);
+      }
+      .card-title { font-size: 0.85rem; color: var(--text); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+      .card-desc { font-size: 0.75rem; color: var(--text-dim); line-height: 1.7; }
 
-    .footer-link { color: #6b7280; text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; transition: color 0.18s ease, transform 0.18s ease; }
-    .footer-link:hover { color: #c084fc; transform: translateX(4px); }
+      /* CTA */
+      .cta { position: relative; z-index: 10; padding: 80px 20px; text-align: center; }
+      .cta-box {
+        max-width: 600px; margin: 0 auto;
+        border: 1px solid rgba(0,255,65,0.2);
+        padding: 48px 32px;
+        background: rgba(0,255,65,0.02);
+        box-shadow: 0 0 40px rgba(0,255,65,0.05);
+      }
+      .cta-title {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 1.6rem; color: var(--green);
+        text-shadow: 0 0 15px rgba(0,255,65,0.4);
+        letter-spacing: 2px; margin-bottom: 16px;
+      }
+      .cta-desc { font-size: 0.8rem; color: var(--text-dim); line-height: 1.8; margin-bottom: 32px; }
 
-    .hero-avatar {
-      width: 80px; height: 80px;
-      border-radius: 50%;
-      border: 2px solid rgba(192,132,252,0.5);
-      object-fit: cover;
-      box-shadow: 0 0 0 6px rgba(124,58,237,0.1), 0 0 30px rgba(124,58,237,0.3);
-    }
+      /* Footer */
+      footer {
+        position: relative; z-index: 10;
+        border-top: 1px solid rgba(0,255,65,0.1);
+        padding: 40px 20px;
+        background: rgba(0,5,0,0.5);
+      }
+      .footer-inner { max-width: 1100px; margin: 0 auto; }
+      .footer-top { display: flex; gap: 40px; flex-wrap: wrap; margin-bottom: 32px; }
+      .footer-brand { flex: 1; min-width: 200px; }
+      .footer-logo {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 1rem; color: var(--green);
+        text-shadow: 0 0 8px var(--green);
+        letter-spacing: 2px; margin-bottom: 10px;
+        text-decoration: none; display: block;
+      }
+      .footer-tagline { font-size: 0.7rem; color: var(--text-dim); line-height: 1.6; margin-bottom: 16px; }
+      .social-links { display: flex; gap: 8px; }
+      .social-link {
+        width: 32px; height: 32px;
+        border: 1px solid rgba(0,255,65,0.2);
+        display: flex; align-items: center; justify-content: center;
+        color: var(--text-dim); font-size: 0.8rem;
+        text-decoration: none; transition: all 0.2s;
+      }
+      .social-link:hover { color: var(--green); border-color: var(--green); box-shadow: 0 0 8px rgba(0,255,65,0.3); }
+      .footer-col h4 {
+        font-size: 0.65rem; color: var(--green-dim);
+        letter-spacing: 2px; text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+      .footer-links { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+      .footer-links a {
+        color: var(--text-dim); text-decoration: none;
+        font-size: 0.75rem; transition: all 0.2s;
+        display: flex; align-items: center; gap: 6px;
+      }
+      .footer-links a::before { content: '//'; color: var(--green-dim); font-size: 0.65rem; }
+      .footer-links a:hover { color: var(--green); text-shadow: 0 0 6px rgba(0,255,65,0.4); }
+      .footer-bottom {
+        border-top: 1px solid rgba(0,255,65,0.08);
+        padding-top: 20px; text-align: center;
+        font-size: 0.7rem; color: var(--text-dim);
+      }
+      .footer-bottom a { color: var(--green-dim); text-decoration: none; transition: color 0.2s; }
+      .footer-bottom a:hover { color: var(--green); }
 
-    [data-anim] {
-      will-change: transform, opacity;
-      transition: opacity 0.65s cubic-bezier(0.4,0,0.2,1), transform 0.65s cubic-bezier(0.4,0,0.2,1);
-    }
-    [data-anim="fade-up"]    { opacity: 0; transform: translateY(32px); }
-    [data-anim="fade-down"]  { opacity: 0; transform: translateY(-32px); }
-    [data-anim="zoom-in"]    { opacity: 0; transform: scale(0.88); }
-    [data-anim="zoom-out"]   { opacity: 0; transform: scale(1.08); }
-    [data-anim="slide-left"] { opacity: 0; transform: translateX(-32px); }
-    [data-anim="slide-right"]{ opacity: 0; transform: translateX(32px); }
-    [data-anim].in-view {
-      opacity: 1;
-      transform: translateY(0) scale(1) translateX(0);
-    }
-    [data-delay="1"] { transition-delay: 0.08s; }
-    [data-delay="2"] { transition-delay: 0.16s; }
-    [data-delay="3"] { transition-delay: 0.24s; }
-    [data-delay="4"] { transition-delay: 0.32s; }
-    [data-delay="5"] { transition-delay: 0.40s; }
-    [data-delay="6"] { transition-delay: 0.48s; }
+      @media (max-width: 768px) {
+        .nav-links { display: none; }
+        .nav-btn.hidden-mobile { display: none; }
+        .menu-btn { display: block; }
+        .stats { grid-template-columns: repeat(3,1fr); }
+        .footer-top { flex-direction: column; gap: 24px; }
+      }
 
-    .badge-pill {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(124,58,237,0.12);
-      border: 1px solid rgba(192,132,252,0.2);
-      border-radius: 999px;
-      padding: 5px 14px;
-      font-size: 0.75rem; font-weight: 500;
-      color: #c084fc;
-    }
-    .status-dot {
-      width: 7px; height: 7px; border-radius: 50%; background: #4ade80;
-      box-shadow: 0 0 6px #4ade80;
-    }
-    .divider-line {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
-    }
-  </style>
-</head>
-<body>
-  <div class="blob w-[420px] h-[420px] bg-purple-800/20 top-[-100px] left-[-80px]" style="animation: blobFloat 12s ease-in-out infinite;"></div>
-  <div class="blob w-[360px] h-[360px] bg-violet-600/12 bottom-[5%] right-[-80px]" style="animation: blobFloat 16s ease-in-out 4s infinite;"></div>
-  <div class="blob w-[280px] h-[280px] bg-indigo-700/10 top-[40%] left-[60%]" style="animation: blobFloat 20s ease-in-out 8s infinite;"></div>
+      /* Cursor blink on title */
+      .cursor { animation: blink 1s step-end infinite; }
+    </style>
+  </head>
+  <body>
+    <canvas id="matrix-canvas"></canvas>
 
-  <nav class="nav-glass sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-5 h-12 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-3 no-underline group">
-        <img src="https://files.giftedtech.co.ke/image/u90mimage.jpg" alt="LordFarhan-XMD" class="w-8 h-8 rounded-full border border-purple-500/50 object-cover" style="transition: box-shadow 0.2s ease;" onmouseover="this.style.boxShadow='0 0 14px rgba(168,85,247,0.6)'" onmouseout="this.style.boxShadow='none'">
-        <span class="text-base font-bold gradient-text">LordFarhan-XMD</span>
-      </a>
-      <div class="hidden md:flex items-center gap-7">
-        <a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank" class="nav-link text-gray-400 text-sm font-medium no-underline flex items-center gap-1.5"><i class="fab fa-github text-xs"></i> Source Code</a>
-        <a href="/pair" class="nav-link text-gray-400 text-sm font-medium no-underline flex items-center gap-1.5"><i class="fas fa-link text-xs"></i> Pair Code</a>
-        <a href="/qr" class="nav-link text-gray-400 text-sm font-medium no-underline flex items-center gap-1.5"><i class="fas fa-qrcode text-xs"></i> QR Code</a>
-        <a href="https://t.me/iamtoxyic" target="_blank" class="nav-link text-gray-400 text-sm font-medium no-underline flex items-center gap-1.5"><i class="fab fa-telegram text-xs"></i> Support</a>
-      </div>
-      <div class="flex items-center gap-3">
-        <a href="/pair" class="hidden md:inline-flex btn btn-primary py-2 px-5 text-xs">
-          <span class="icon-animated"><i class="fas fa-link"></i></span> Get Session
+    <nav>
+      <div class="nav-inner">
+        <a href="/" class="logo">
+          <span class="logo-bracket">[</span>LordFarhan-XMD<span class="logo-bracket">]</span>
         </a>
-        <button id="menuBtn" class="md:hidden w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/8 text-gray-500 outline-none focus:outline-none focus:ring-0" style="transition: background 0.18s ease, color 0.18s ease;">
-          <i class="fas fa-bars" id="menuIcon"></i>
-        </button>
-      </div>
-    </div>
-  </nav>
-
-  <div id="sidebarOverlay" class="fixed inset-0 z-40 bg-black/60 opacity-0 pointer-events-none"></div>
-  <aside id="sidebar" class="fixed top-0 left-0 z-50 h-full w-72 bg-[#0a0a14] border-r border-white/6 flex flex-col pt-5 pb-8 transform -translate-x-full rounded-r-3xl">
-    <div class="flex items-center justify-between px-5 mb-6">
-      <a href="/" class="flex items-center gap-2.5 no-underline">
-        <img src="https://files.giftedtech.co.ke/image/u90mimage.jpg" alt="LordFarhan-XMD" class="w-8 h-8 rounded-full border border-purple-500/50 object-cover">
-        <span class="text-sm font-bold gradient-text">LordFarhan-XMD</span>
-      </a>
-      <button id="closeBtn" class="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 text-gray-400" style="transition: background 0.18s, color 0.18s;">
-        <i class="fas fa-times text-sm"></i>
-      </button>
-    </div>
-    <div class="px-3 flex-1 space-y-1">
-      <a href="/" class="sidebar-link"><i class="fas fa-home"></i> Home</a>
-      <a href="/pair" class="sidebar-link"><i class="fas fa-link"></i> Pair Code</a>
-      <a href="/qr" class="sidebar-link"><i class="fas fa-qrcode"></i> QR Code</a>
-      <a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank" class="sidebar-link"><i class="fab fa-github"></i> Source Code</a>
-      <a href="https://t.me/iamtoxyic" target="_blank" class="sidebar-link"><i class="fab fa-telegram"></i> Support</a>
-      <a href="https://whatsapp.com/channel/0029Vb8ANT4J93weNOlcux3g" target="_blank" class="sidebar-link"><i class="fab fa-whatsapp"></i> WA Channel</a>
-    </div>
-    <div class="px-5 pt-5 border-t border-white/6">
-      <p class="text-gray-600 text-xs">Powered by LordFarhan-XMD</p>
-    </div>
-  </aside>
-
-  <main class="relative z-10">
-    <section class="min-h-screen flex flex-col items-center justify-center text-center px-5 pt-24 pb-16">
-      <div class="max-w-3xl mx-auto w-full">
-        <div class="flex justify-center mb-6" data-anim="zoom-in">
-          <img src="https://files.giftedtech.co.ke/image/u90mimage.jpg" alt="LordFarhan-XMD" class="hero-avatar">
+        <div class="nav-links">
+          <a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank" class="nav-link"><i class="fab fa-github"></i> Source</a>
+          <a href="/pair" class="nav-link"><i class="fas fa-link"></i> Pair Code</a>
+          <a href="/qr" class="nav-link"><i class="fas fa-qrcode"></i> QR Code</a>
+          <a href="https://t.me/iamtoxyic" target="_blank" class="nav-link"><i class="fab fa-telegram"></i> Support</a>
         </div>
-        <div class="flex justify-center mb-5" data-anim="fade-up" data-delay="1">
-          <span class="badge-pill"><span class="status-dot"></span> Session Server Active</span>
-        </div>
-        <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[1.1] mb-5 gradient-text" data-anim="fade-up" data-delay="2">
-          Advanced WhatsApp<br>Bot Solution
-        </h1>
-        <p class="text-gray-400 text-base sm:text-lg mb-10 max-w-xl mx-auto leading-relaxed" data-anim="fade-up" data-delay="3">
-          LordFarhan-XMD delivers powerful WhatsApp automation with pair code and QR login — fast, secure, and easy to use.
-        </p>
-        <div class="flex flex-row items-center justify-center gap-3" data-anim="fade-up" data-delay="4">
-          <a href="/pair" class="btn btn-primary">
-            <span class="icon-animated"><i class="fas fa-link"></i></span> Pair Code
-          </a>
-          <a href="/qr" class="btn btn-ghost">
-            <span class="icon-animated"><i class="fas fa-qrcode"></i></span> QR Code
-          </a>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <a href="/pair" class="nav-btn hidden-mobile"><i class="fas fa-terminal"></i> Get Session</a>
+          <button class="menu-btn" id="menuBtn"><i class="fas fa-bars" id="menuIcon"></i></button>
         </div>
       </div>
-      <div class="mt-20 w-full max-w-3xl mx-auto grid grid-cols-3 gap-4" data-anim="fade-up" data-delay="5">
-        <div class="bg-white/[0.03] border border-white/6 rounded-2xl p-4 text-center">
-          <p class="text-2xl font-bold gradient-text">2</p>
-          <p class="text-gray-500 text-xs mt-1">Login Methods</p>
-        </div>
-        <div class="bg-white/[0.03] border border-white/6 rounded-2xl p-4 text-center">
-          <p class="text-2xl font-bold gradient-text">100%</p>
-          <p class="text-gray-500 text-xs mt-1">Open Source</p>
-        </div>
-        <div class="bg-white/[0.03] border border-white/6 rounded-2xl p-4 text-center">
-          <p class="text-2xl font-bold gradient-text">24/7</p>
-          <p class="text-gray-500 text-xs mt-1">Available</p>
-        </div>
+    </nav>
+
+    <div id="overlay"></div>
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <span class="logo" style="font-size:0.85rem;">[LordFarhan-XMD]</span>
+        <button class="sidebar-close" id="closeBtn"><i class="fas fa-times"></i></button>
+      </div>
+      <nav class="sidebar-links">
+        <a href="/" class="sidebar-link"><i class="fas fa-home"></i> Home</a>
+        <a href="/pair" class="sidebar-link"><i class="fas fa-link"></i> Pair Code</a>
+        <a href="/qr" class="sidebar-link"><i class="fas fa-qrcode"></i> QR Code</a>
+        <a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank" class="sidebar-link"><i class="fab fa-github"></i> Source Code</a>
+        <a href="https://t.me/iamtoxyic" target="_blank" class="sidebar-link"><i class="fab fa-telegram"></i> Support</a>
+        <a href="https://whatsapp.com/channel/0029Vb8ANT4J93weNOlcux3g" target="_blank" class="sidebar-link"><i class="fab fa-whatsapp"></i> WA Channel</a>
+      </nav>
+      <div class="sidebar-footer">// powered by LordFarhan-XMD</div>
+    </aside>
+
+    <section class="hero">
+      <div class="terminal-badge"><span class="status-dot"></span> System Online</div>
+      <h1 class="ascii-title">LordFarhan-XMD<span class="cursor">_</span></h1>
+      <p class="ascii-sub">WhatsApp Session Generator</p>
+      <p class="hero-desc">
+        Advanced WhatsApp bot session generator.<br>
+        <span>Pair code</span> and <span>QR code</span> login — fast, encrypted, always online.
+      </p>
+      <div class="btn-group">
+        <a href="/pair" class="btn btn-primary"><i class="fas fa-link"></i> Pair Code</a>
+        <a href="/qr" class="btn btn-outline"><i class="fas fa-qrcode"></i> QR Code</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-val">2</div><div class="stat-label">Login Methods</div></div>
+        <div class="stat"><div class="stat-val">100%</div><div class="stat-label">Open Source</div></div>
+        <div class="stat"><div class="stat-val">24/7</div><div class="stat-label">Online</div></div>
       </div>
     </section>
 
-    <div class="divider-line"></div>
+    <div class="divider"></div>
 
-    <section class="py-20 px-5">
-      <div class="max-w-6xl mx-auto">
-        <div class="text-center mb-14">
-          <h2 class="text-3xl sm:text-4xl font-extrabold gradient-text mb-3" data-anim="fade-up">Key Features</h2>
-          <p class="text-gray-500 text-sm max-w-lg mx-auto" data-anim="fade-up" data-delay="1">Everything you need to connect and automate your WhatsApp experience.</p>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <a href="/pair" class="feature-card" data-anim="fade-up" data-delay="1">
+    <section class="section">
+      <div class="section-inner">
+        <h2 class="section-title">Features</h2>
+        <p class="section-sub">// core capabilities of the session server</p>
+        <div class="features-grid">
+          <a href="/pair" class="feature-card">
             <div class="card-icon"><i class="fas fa-link"></i></div>
-            <h3 class="text-white font-semibold mb-2">Pair Code Login</h3>
-            <p class="text-gray-500 text-sm leading-relaxed">Connect your WhatsApp account with a simple pairing code. No phone access needed.</p>
+            <h3 class="card-title">Pair Code Login</h3>
+            <p class="card-desc">Connect your WhatsApp with a pairing code. No phone or QR scan needed.</p>
           </a>
-          <a href="/qr" class="feature-card" data-anim="fade-up" data-delay="2">
+          <a href="/qr" class="feature-card">
             <div class="card-icon"><i class="fas fa-qrcode"></i></div>
-            <h3 class="text-white font-semibold mb-2">QR Code Login</h3>
-            <p class="text-gray-500 text-sm leading-relaxed">Traditional QR scanning for a quick, seamless connection to your WhatsApp account.</p>
+            <h3 class="card-title">QR Code Login</h3>
+            <p class="card-desc">Classic QR scanning for a fast, seamless WhatsApp connection.</p>
           </a>
-          <a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank" class="feature-card" data-anim="fade-up" data-delay="3">
+          <a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank" class="feature-card">
             <div class="card-icon"><i class="fas fa-code"></i></div>
-            <h3 class="text-white font-semibold mb-2">Open Source</h3>
-            <p class="text-gray-500 text-sm leading-relaxed">Fully available codebase on GitHub. Customize and extend it to match your exact needs.</p>
+            <h3 class="card-title">Open Source</h3>
+            <p class="card-desc">Full codebase on GitHub. Fork, customize, and deploy your own instance.</p>
           </a>
-          <a href="https://t.me/iamtoxyic" target="_blank" class="feature-card" data-anim="fade-up" data-delay="2">
+          <a href="https://t.me/iamtoxyic" target="_blank" class="feature-card">
             <div class="card-icon"><i class="fas fa-headset"></i></div>
-            <h3 class="text-white font-semibold mb-2">Premium Support</h3>
-            <p class="text-gray-500 text-sm leading-relaxed">Dedicated help from our team to get you set up and running in no time.</p>
+            <h3 class="card-title">Support</h3>
+            <p class="card-desc">Get help from the developer directly on Telegram.</p>
           </a>
-          <a href="https://whatsapp.com/channel/0029Vb8ANT4J93weNOlcux3g" target="_blank" class="feature-card" data-anim="fade-up" data-delay="3">
+          <a href="https://whatsapp.com/channel/0029Vb8ANT4J93weNOlcux3g" target="_blank" class="feature-card">
             <div class="card-icon"><i class="fab fa-whatsapp"></i></div>
-            <h3 class="text-white font-semibold mb-2">Regular Updates</h3>
-            <p class="text-gray-500 text-sm leading-relaxed">Stay current with the latest features and fixes via our WhatsApp channel.</p>
+            <h3 class="card-title">Updates Channel</h3>
+            <p class="card-desc">Follow the WA channel for latest features and announcements.</p>
           </a>
-          <div class="feature-card cursor-default" data-anim="fade-up" data-delay="4">
+          <div class="feature-card" style="cursor:default;">
             <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
-            <h3 class="text-white font-semibold mb-2">Secure Sessions</h3>
-            <p class="text-gray-500 text-sm leading-relaxed">End-to-end encrypted session handling keeps your WhatsApp credentials safe.</p>
+            <h3 class="card-title">Encrypted Sessions</h3>
+            <p class="card-desc">Sessions are gzip-compressed and base64-encoded for safe transmission.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <div class="divider-line"></div>
+    <div class="divider"></div>
 
-    <section class="py-20 px-5">
-      <div class="max-w-2xl mx-auto text-center">
-        <div data-anim="zoom-in">
-          <div class="w-14 h-14 rounded-2xl gradient-bg flex items-center justify-center mx-auto mb-6" style="box-shadow: 0 8px 28px rgba(124,58,237,0.4);">
-            <i class="fas fa-bolt text-white text-xl"></i>
-          </div>
-          <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">Ready to Get Started?</h2>
-          <p class="text-gray-400 text-sm sm:text-base mb-9 leading-relaxed max-w-lg mx-auto">
-            LordFarhan-XMD makes WhatsApp automation effortless — group management, messaging, and third-party integrations in one place.
-          </p>
-          <div class="flex flex-row items-center justify-center gap-3">
-            <a href="/pair" class="btn btn-primary" data-anim="slide-left" data-delay="1">
-              <span class="icon-animated"><i class="fas fa-link"></i></span> Connect Now
-            </a>
-            <a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank" class="btn btn-ghost" data-anim="slide-right" data-delay="1">
-              <span class="icon-animated"><i class="fab fa-github"></i></span> View on GitHub
-            </a>
-          </div>
+    <section class="cta">
+      <div class="cta-box">
+        <h2 class="cta-title">> Initialize Session_</h2>
+        <p class="cta-desc">Get your session ID and deploy LordFarhan-XMD bot in minutes. Choose your preferred login method below.</p>
+        <div class="btn-group">
+          <a href="/pair" class="btn btn-primary"><i class="fas fa-link"></i> Pair Code</a>
+          <a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank" class="btn btn-outline"><i class="fab fa-github"></i> GitHub</a>
         </div>
       </div>
     </section>
 
-    <div class="divider-line"></div>
+    <div class="divider"></div>
 
-    <footer class="py-12 px-5 bg-[#040408]">
-      <div class="max-w-6xl mx-auto">
-        <div class="mb-10">
-          <div class="mb-8" data-anim="slide-left">
-            <a href="/" class="flex items-center gap-2.5 no-underline mb-3">
-              <img src="https://files.giftedtech.co.ke/image/u90mimage.jpg" alt="LordFarhan-XMD" class="w-7 h-7 rounded-full border border-purple-500/40 object-cover">
-              <span class="text-sm font-bold gradient-text">LordFarhan-XMD</span>
-            </a>
-            <p class="text-gray-600 text-xs leading-relaxed mb-4">Advanced WhatsApp bot solution with powerful automation and seamless integration capabilities.</p>
-            <div class="flex gap-2">
-              <a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
-              <a href="https://t.me/iamtoxyic" target="_blank" class="social-icon"><i class="fab fa-telegram"></i></a>
-              <a href="https://whatsapp.com/channel/0029Vb8ANT4J93weNOlcux3g" target="_blank" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <a href="/" class="footer-logo">[LordFarhan-XMD]</a>
+            <p class="footer-tagline">Advanced WhatsApp bot session generator. Powered by Baileys.</p>
+            <div class="social-links">
+              <a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank" class="social-link"><i class="fab fa-github"></i></a>
+              <a href="https://t.me/iamtoxyic" target="_blank" class="social-link"><i class="fab fa-telegram"></i></a>
+              <a href="https://whatsapp.com/channel/0029Vb8ANT4J93weNOlcux3g" target="_blank" class="social-link"><i class="fab fa-whatsapp"></i></a>
             </div>
           </div>
-          <div class="grid grid-cols-2 gap-8">
-            <div data-anim="fade-up" data-delay="1">
-              <h3 class="text-white text-xs font-semibold uppercase tracking-wider mb-4">Quick Links</h3>
-              <ul class="space-y-2.5">
-                <li><a href="/pair" class="footer-link"><i class="fas fa-chevron-right text-purple-500 text-xs"></i> Pair Code</a></li>
-                <li><a href="/qr" class="footer-link"><i class="fas fa-chevron-right text-purple-500 text-xs"></i> QR Code</a></li>
-                <li><a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank" class="footer-link"><i class="fas fa-chevron-right text-purple-500 text-xs"></i> Source Code</a></li>
-                <li><a href="/health" class="footer-link"><i class="fas fa-chevron-right text-purple-500 text-xs"></i> Health Check</a></li>
-              </ul>
-            </div>
-            <div data-anim="slide-right">
-              <h3 class="text-white text-xs font-semibold uppercase tracking-wider mb-4">Connect</h3>
-              <ul class="space-y-2.5">
-                <li><a href="https://t.me/iamtoxyic" target="_blank" class="footer-link"><i class="fab fa-telegram text-purple-500 text-xs"></i> Telegram Support</a></li>
-                <li><a href="https://whatsapp.com/channel/0029Vb8ANT4J93weNOlcux3g" target="_blank" class="footer-link"><i class="fab fa-whatsapp text-purple-500 text-xs"></i> WhatsApp Channel</a></li>
-                <li><a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank" class="footer-link"><i class="fab fa-github text-purple-500 text-xs"></i> GitHub</a></li>
-              </ul>
-            </div>
+          <div class="footer-col">
+            <h4>Navigation</h4>
+            <ul class="footer-links">
+              <li><a href="/pair">Pair Code</a></li>
+              <li><a href="/qr">QR Code</a></li>
+              <li><a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank">Source Code</a></li>
+              <li><a href="/health">Health Check</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Connect</h4>
+            <ul class="footer-links">
+              <li><a href="https://t.me/iamtoxyic" target="_blank">Telegram Support</a></li>
+              <li><a href="https://whatsapp.com/channel/0029Vb8ANT4J93weNOlcux3g" target="_blank">WhatsApp Channel</a></li>
+              <li><a href="https://github.com/DarkLordFarhan" target="_blank">GitHub Profile</a></li>
+            </ul>
           </div>
         </div>
-        <div class="divider-line mb-5"></div>
-        <p class="text-gray-700 text-xs text-center">
-          &copy; <span id="yr"></span> LordFarhan-XMD &mdash; Built by <a href="https://github.com/DarkLordFarhan" target="_blank" class="text-purple-400 no-underline font-medium" style="transition:color 0.18s;" onmouseover="this.style.color='#c084fc'" onmouseout="this.style.color='#a855f7'">LordFarhan</a>
-        </p>
+        <div class="footer-bottom">
+          <span>&copy; <span id="yr"></span> LordFarhan-XMD &mdash; Built by <a href="https://github.com/DarkLordFarhan" target="_blank">LordFarhan</a></span>
+        </div>
       </div>
     </footer>
-  </main>
 
-  <script>
-    document.getElementById('yr').textContent = new Date().getFullYear();
+    <script>
+      document.getElementById('yr').textContent = new Date().getFullYear();
 
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    const menuBtn = document.getElementById('menuBtn');
-    const closeBtn = document.getElementById('closeBtn');
-    const menuIcon = document.getElementById('menuIcon');
-
-    function openSidebar() {
-      sidebar.style.transform = 'translateX(0)';
-      overlay.style.opacity = '1';
-      overlay.style.pointerEvents = 'auto';
-      menuIcon.className = 'fas fa-times';
-      document.body.style.overflow = 'hidden';
-    }
-    function closeSidebar() {
-      sidebar.style.transform = 'translateX(-100%)';
-      overlay.style.opacity = '0';
-      overlay.style.pointerEvents = 'none';
-      menuIcon.className = 'fas fa-bars';
-      document.body.style.overflow = '';
-    }
-
-    menuBtn.addEventListener('click', () => {
-      sidebar.style.transform === 'translateX(0)' ? closeSidebar() : openSidebar();
-      menuBtn.blur();
-    });
-    closeBtn.addEventListener('click', closeSidebar);
-    overlay.addEventListener('click', closeSidebar);
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in-view');
-        } else {
-          entry.target.classList.remove('in-view');
-        }
-      });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-
-    document.querySelectorAll('[data-anim]').forEach(el => observer.observe(el));
-
-    (function setCircularFavicon(src) {
-      const canvas = document.createElement('canvas');
-      canvas.width = 64; canvas.height = 64;
+      // Matrix rain
+      const canvas = document.getElementById('matrix-canvas');
       const ctx = canvas.getContext('2d');
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => {
-        ctx.beginPath();
-        ctx.arc(32, 32, 32, 0, Math.PI * 2);
-        ctx.closePath();
-        ctx.clip();
-        ctx.drawImage(img, 0, 0, 64, 64);
-        const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-        link.type = 'image/png';
-        link.rel = 'shortcut icon';
-        link.href = canvas.toDataURL();
-        document.head.appendChild(link);
-      };
-      img.src = src;
-    })('https://files.giftedtech.co.ke/image/u90mimage.jpg');
-  </script>
-</body>
-</html>
+      function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+      const chars = 'LORDFARHAN01XMD!@#$%アイウエオカキクケコサシスセソタチツ'.split('');
+      const fontSize = 13;
+      let cols = Math.floor(canvas.width / fontSize);
+      let drops = Array(cols).fill(1);
+      function drawMatrix() {
+        ctx.fillStyle = 'rgba(0,0,0,0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#00ff41';
+        ctx.font = fontSize + 'px Share Tech Mono, monospace';
+        cols = Math.floor(canvas.width / fontSize);
+        if (drops.length < cols) drops = drops.concat(Array(cols - drops.length).fill(1));
+        for (let i = 0; i < cols; i++) {
+          const char = chars[Math.floor(Math.random() * chars.length)];
+          ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+          drops[i]++;
+        }
+      }
+      setInterval(drawMatrix, 50);
+
+      // Sidebar
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      const menuBtn = document.getElementById('menuBtn');
+      const closeBtn = document.getElementById('closeBtn');
+      const menuIcon = document.getElementById('menuIcon');
+      function openSidebar() { sidebar.classList.add('open'); overlay.classList.add('show'); menuIcon.className = 'fas fa-times'; document.body.style.overflow = 'hidden'; }
+      function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('show'); menuIcon.className = 'fas fa-bars'; document.body.style.overflow = ''; }
+      menuBtn.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
+      closeBtn.addEventListener('click', closeSidebar);
+      overlay.addEventListener('click', closeSidebar);
+    </script>
+  </body>
+  </html>
