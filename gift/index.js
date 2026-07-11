@@ -24,20 +24,4 @@ async function removeFile(FilePath) {
     return true;
 }
 
-const safeGroupAcceptInvite = async (Gifted, groupJid) => {
-    if (!groupJid) return false;
-    try {
-        await Gifted.groupAcceptInvite(groupJid);
-        return true;
-    } catch (error) {
-        switch (error.data) {
-            case 409: console.log(`Already in group: ${groupJid}`); break;
-            case 400: console.log(`Invalid invite code for group: ${groupJid}`); break;
-            case 403: console.log(`No permission to join group: ${groupJid}`); break;
-            default:  console.error(`Group join failed for ${groupJid}:`, error.message);
-        }
-        return false;
-    }
-};
-
-module.exports = { giftedId, removeFile, generateRandomCode, safeGroupAcceptInvite };
+module.exports = { giftedId, removeFile, generateRandomCode };

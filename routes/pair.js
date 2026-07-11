@@ -3,7 +3,7 @@ const {
     removeFile,
     generateRandomCode
 } = require('../gift');
-const { SESSION_PREFIX, GC_JID, BOT_REPO, WA_CHANNEL, MSG_FOOTER } = require('../config');
+const { SESSION_PREFIX, BOT_REPO } = require('../config');
 const { isConfigured, saveSession } = require('../gift/sessionStore');
 const zlib = require('zlib');
 const express = require('express');
@@ -19,7 +19,7 @@ const {
     fetchLatestBaileysVersion,
     makeCacheableSignalKeyStore,
     Browsers
-} = require("@whiskeysockets/baileys");
+} = require("baileys");
 
 const sessionDir = path.join(__dirname, "session");
 
@@ -79,13 +79,7 @@ router.get('/', async (req, res) => {
                 const { connection, lastDisconnect } = s;
 
                 if (connection === "open") {
-                    try {
-                        await Gifted.groupAcceptInvite(GC_JID);
-                    } catch (e) {
-                        console.log("Group join error:", e.message);
-                    }
-
-                    await delay(50000);
+                    await delay(20000);
 
                     let sessionData = null;
                     let attempts = 0;
@@ -127,15 +121,13 @@ router.get('/', async (req, res) => {
                             msgText = `*SESSION ID ✅*\n\n${shortSession}`;
                             msgButtons = [
                                 { name: 'cta_copy', buttonParamsJson: JSON.stringify({ display_text: 'Copy Session', copy_code: shortSession }) },
-                                { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text: 'Visit Bot Repo', url: BOT_REPO }) },
-                                { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text: 'Join WaChannel', url: WA_CHANNEL }) }
+                                { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text: 'Visit Bot Repo', url: BOT_REPO }) }
                             ];
                         } else {
                             msgText = `*SESSION ID ✅*\n\n${fullSession}`;
                             msgButtons = [
                                 { name: 'cta_copy', buttonParamsJson: JSON.stringify({ display_text: 'Copy Session', copy_code: fullSession }) },
-                                { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text: 'Visit Bot Repo', url: BOT_REPO }) },
-                                { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text: 'Join WaChannel', url: WA_CHANNEL }) }
+                                { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text: 'Visit Bot Repo', url: BOT_REPO }) }
                             ];
                         }
 
@@ -150,7 +142,6 @@ router.get('/', async (req, res) => {
                                 await sendButtons(Gifted, Gifted.user.id, {
                                     title: '',
                                     text: msgText,
-                                    footer: MSG_FOOTER,
                                     buttons: msgButtons
                                 });
                                 sessionSent = true;

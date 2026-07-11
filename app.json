@@ -1,17 +1,15 @@
 {
-    "name": "Gifted Session Generator",
-    "description": "Web Session Generator",
-    "logo": "https://files.catbox.moe/52699c.jpg",
-    "repository": "https://github.com/mauricegift/gifted-sess",
-    "keywords": ["Gifted-Tech"],
-    "success_url": "/", 
+    "name": "LordFarhanBot Session Generator",
+    "description": "WhatsApp Session Generator for LordFarhanBot",
+    "repository": "https://github.com/DarkLordFarhan/LordFarhan-XMD",
+    "keywords": ["LordFarhanBot"],
+    "success_url": "/",
     "buildpacks": [{ "url": "https://github.com/heroku/heroku-buildpack-nodejs#latest" } ],
-    "env": {      
+    "env": {
       "PORT": {
         "description": "Port for web app.4000,5000,3000... any!",
         "value": "50900",
-        "required": false 
+        "required": false
       }
-    }   
-
+    }
 }

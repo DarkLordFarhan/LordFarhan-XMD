@@ -1,9 +1,9 @@
-# Gifted-Session-Generator
+# LordFarhanBot Session Generator
 
-> WhatsApp session generator for **ATASSA-MD / Gifted-MD** and any Baileys-based bot.  
-> Supports **pair code** and **QR code** login, with optional **short session IDs** stored in MongoDB or PostgreSQL.
+> WhatsApp session generator for **LordFarhanBot** and any Baileys-based bot.
+> Supports **pair code** and **QR code** login, with optional **short session IDs** stored in MongoDB or PostgreSQL. Sessions are delivered directly to your own WhatsApp DM.
 
-<a href='https://github.com/mauricegift/gifted-session/fork' target="_blank">
+<a href='https://github.com/DarkLordFarhan/LordFarhan-XMD/fork' target="_blank">
   <img alt='FORK REPO' src='https://img.shields.io/badge/-FORK REPO-black?style=for-the-badge&logo=github&logoColor=white'/>
 </a>
 
@@ -13,6 +13,7 @@
 
 - 🔗 **Pair Code login** — no phone needed, enter code in WhatsApp → Linked Devices
 - 📷 **QR Code login** — traditional QR scan
+- 📩 **DM-only delivery** — your session is sent straight to your own WhatsApp, never posted to a group or channel
 - 🗜️ **Long session** — full zlib/base64 inline string (works anywhere, no DB needed)
 - 🗃️ **Short session** — compact ID stored in MongoDB or PostgreSQL (auto-falls back to long if no DB)
 - ⚡ Auto-detects database type from `DATABASE_URL` (`mongodb://` or `postgres://`)
@@ -26,11 +27,9 @@ Set these in a `.env` file or your hosting dashboard:
 | Variable | Required | Description |
 |---|---|---|
 | `DATABASE_URL` | Optional | MongoDB (`mongodb+srv://...`) or PostgreSQL (`postgres://...`) connection string. If not set, all sessions use long format. |
-| `SESSION_PREFIX` | Optional | Prefix prepended to session strings. Default: `Gifted~` |
+| `SESSION_PREFIX` | Optional | Prefix prepended to session strings. Default: `LordBot~` |
 | `PORT` | Optional | Port to listen on. Default: `50900` |
-| `BOT_REPO` | Optional | GitHub URL shown in WhatsApp message button. Default: atassa repo |
-| `WA_CHANNEL` | Optional | WhatsApp channel URL shown in message button. |
-| `MSG_FOOTER` | Optional | Footer text in WhatsApp session message. |
+| `BOT_REPO` | Optional | GitHub URL shown in the WhatsApp message button. Default: this repo |
 
 ---
 
@@ -73,7 +72,7 @@ async function loadSession(SESSION_ID) {
     // Remove existing creds
     if (fs.existsSync(credsPath)) fs.unlinkSync(credsPath);
 
-    const PREFIX = 'Gifted~';
+    const PREFIX = 'LordBot~';
 
     if (!SESSION_ID.startsWith(PREFIX)) {
         throw new Error(`Invalid session format. Expected to start with "${PREFIX}"`);
@@ -86,7 +85,7 @@ async function loadSession(SESSION_ID) {
     // Long: full zlib/base64 string (very long)
     if (payload.length < 50) {
         // SHORT SESSION — fetch full session from server
-        const serverUrl = `https://session.giftedtech.co.ke/session/${payload}`;
+        const serverUrl = `https://your-deployed-domain.example.com/session/${payload}`;
         const response = await axios.get(serverUrl, { timeout: 10000 });
         const fullSession = response.data;
 
@@ -134,16 +133,16 @@ connectToWhatsApp();
 ### Example `.env` for Your Bot
 
 ```env
-SESSION_ID=Gifted~abc123xyz   # short session
+SESSION_ID=LordBot~abc123xyz   # short session
 # or
-SESSION_ID=Gifted~H4sIAAAAA...  # long session (full zlib string)
+SESSION_ID=LordBot~H4sIAAAAA...  # long session (full zlib string)
 ```
 
 ---
 
 ## Deployment
 
-<a href='https://dashboard.heroku.com/new?template=https://github.com/mauricegift/gifted-session' target="_blank">
+<a href='https://dashboard.heroku.com/new?template=https://github.com/DarkLordFarhan/LordFarhan-XMD' target="_blank">
   <img alt='HEROKU DEPLOY' src='https://img.shields.io/badge/-HEROKU DEPLOY-black?style=for-the-badge&logo=heroku&logoColor=white'/>
 </a>
 <br>
@@ -157,23 +156,6 @@ SESSION_ID=Gifted~H4sIAAAAA...  # long session (full zlib string)
 
 ---
 
-## Live Demo
-
-[`https://session.giftedtech.co.ke`](https://session.giftedtech.co.ke)
-
----
-
 ## Owner
 
-<a href="https://github.com/mauricegift">
-  <img src="https://github.com/mauricegift.png" width="150" height="150" alt="Gifted Tech" style="border-radius:50%"/>
-</a>
-
-[`ℹ️ Contact Owner`](https://api.giftedtech.co.ke/contact)
-
-
-## Repo Star History
-
-[![Gifted-Session](https://api.star-history.com/svg?repos=mauricegift/gifted-session&type=Timeline)](#)
-
-<a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
+Maintained by **LordFarhan** — [github.com/DarkLordFarhan](https://github.com/DarkLordFarhan)

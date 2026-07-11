@@ -1,16 +1,16 @@
 {
-  "name": "atassa-session",
+  "name": "lordfarhanbot-session",
   "main": "./index.js",
   "type": "commonjs",
   "scripts": {
-    "start": "pm2 start index.js --deep-monitoring --attach --name giftedsess",
-    "stop": "pm2 stop giftedsess",
-    "restart": "pm2 restart giftedsess"
+    "start": "pm2 start index.js --deep-monitoring --attach --name lordfarhanbot",
+    "stop": "pm2 stop lordfarhanbot",
+    "restart": "pm2 restart lordfarhanbot"
   },
-  "author": "Gifted Tech",
+  "author": "LordFarhan",
   "license": "MIT",
   "dependencies": {
-    "@whiskeysockets/baileys": "npm:baileys@^6.7.21",
+    "baileys": "^7.0.0-rc13",
     "body-parser": "^2.2.2",
     "dotenv": "^17.3.1",
     "express": "*",

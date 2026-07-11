@@ -3,44 +3,45 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>LordFarhan-XMD | Session Generator</title>
-    <meta name="description" content="LordFarhan-XMD — WhatsApp bot session generator. Pair code and QR code login.">
-    <meta name="theme-color" content="#00ff41">
-    <meta property="og:title" content="LordFarhan-XMD | WhatsApp Bot">
-    <meta property="og:description" content="Generate your WhatsApp session with LordFarhan-XMD.">
+    <title>LordFarhanBot | Session Generator</title>
+    <meta name="description" content="LordFarhanBot — WhatsApp bot session generator. Pair code and QR code login.">
+    <meta name="theme-color" content="#ff2d95">
+    <meta property="og:title" content="LordFarhanBot | WhatsApp Bot">
+    <meta property="og:description" content="Generate your WhatsApp session with LordFarhanBot.">
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
       :root {
-        --green: #00ff41;
-        --green-dim: #00cc33;
-        --green-dark: #003b00;
-        --green-glow: rgba(0,255,65,0.18);
-        --bg: #000000;
-        --bg2: #050f05;
-        --text: #c8ffc8;
-        --text-dim: #4a7a4a;
+        --pink: #ff2d95;
+        --pink-dim: #d6006b;
+        --pink-dark: #3a0020;
+        --pink-glow: rgba(255,45,149,0.2);
+        --bg: #0a0006;
+        --bg2: #12000c;
+        --text: #ffd6ec;
+        --text-dim: #a3597e;
       }
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       html { scroll-behavior: smooth; }
       body {
         font-family: 'Fira Code', 'Share Tech Mono', monospace;
-        background: var(--bg);
-        color: var(--green);
+        background: var(--bg) url('/img/bg-hero.jpg') center/cover fixed no-repeat;
+        color: var(--pink);
         min-height: 100vh;
         overflow-x: hidden;
         scrollbar-width: thin;
-        scrollbar-color: var(--green-dim) #000;
+        scrollbar-color: var(--pink-dim) #000;
       }
       body::-webkit-scrollbar { width: 4px; }
       body::-webkit-scrollbar-track { background: #000; }
-      body::-webkit-scrollbar-thumb { background: var(--green-dim); }
+      body::-webkit-scrollbar-thumb { background: var(--pink-dim); }
 
-      /* Matrix Canvas */
-      #matrix-canvas {
+      /* Dark tint overlay so content stays legible over the background photo */
+      #bg-overlay {
         position: fixed; top: 0; left: 0;
         width: 100%; height: 100%;
-        z-index: 0; opacity: 0.07;
+        z-index: 0;
+        background: radial-gradient(ellipse at 50% 0%, rgba(10,0,6,0.55) 0%, rgba(10,0,6,0.88) 55%, rgba(10,0,6,0.97) 100%);
         pointer-events: none;
       }
 
@@ -63,10 +64,10 @@
       /* Nav */
       nav {
         position: sticky; top: 0; z-index: 100;
-        background: rgba(0,0,0,0.92);
-        border-bottom: 1px solid var(--green-dim);
+        background: rgba(10,0,6,0.92);
+        border-bottom: 1px solid var(--pink-dim);
         backdrop-filter: blur(8px);
-        box-shadow: 0 0 20px rgba(0,255,65,0.1);
+        box-shadow: 0 0 20px rgba(255,45,149,0.12);
       }
       .nav-inner {
         max-width: 1100px; margin: 0 auto;
@@ -75,26 +76,26 @@
       }
       .logo {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 1rem; color: var(--green);
+        font-size: 1rem; color: var(--pink);
         text-decoration: none;
         display: flex; align-items: center; gap: 8px;
-        text-shadow: 0 0 10px var(--green);
+        text-shadow: 0 0 10px var(--pink);
         letter-spacing: 2px;
       }
-      .logo-bracket { color: var(--green-dim); }
+      .logo-bracket { color: var(--pink-dim); }
       .nav-links { display: flex; align-items: center; gap: 24px; }
       .nav-link {
-        color: var(--green-dim); text-decoration: none;
+        color: var(--pink-dim); text-decoration: none;
         font-size: 0.75rem; letter-spacing: 1px;
         text-transform: uppercase;
         transition: color 0.2s, text-shadow 0.2s;
         display: flex; align-items: center; gap: 6px;
       }
-      .nav-link:hover { color: var(--green); text-shadow: 0 0 8px var(--green); }
+      .nav-link:hover { color: var(--pink); text-shadow: 0 0 8px var(--pink); }
       .nav-btn {
         background: transparent;
-        border: 1px solid var(--green-dim);
-        color: var(--green); padding: 6px 16px;
+        border: 1px solid var(--pink-dim);
+        color: var(--pink); padding: 6px 16px;
         font-family: 'Fira Code', monospace;
         font-size: 0.7rem; letter-spacing: 1px;
         text-decoration: none; text-transform: uppercase;
@@ -103,22 +104,22 @@
         display: inline-flex; align-items: center; gap: 6px;
       }
       .nav-btn:hover {
-        background: var(--green-glow);
-        border-color: var(--green);
-        box-shadow: 0 0 12px rgba(0,255,65,0.3);
+        background: var(--pink-glow);
+        border-color: var(--pink);
+        box-shadow: 0 0 12px rgba(255,45,149,0.35);
       }
       .menu-btn {
-        display: none; background: none; border: 1px solid var(--green-dim);
-        color: var(--green-dim); padding: 6px 10px; cursor: pointer;
+        display: none; background: none; border: 1px solid var(--pink-dim);
+        color: var(--pink-dim); padding: 6px 10px; cursor: pointer;
         font-size: 0.9rem; transition: all 0.2s;
       }
-      .menu-btn:hover { color: var(--green); border-color: var(--green); }
+      .menu-btn:hover { color: var(--pink); border-color: var(--pink); }
 
       /* Sidebar */
       #sidebar {
         position: fixed; top: 0; left: 0; height: 100%; width: 260px;
-        background: rgba(0,5,0,0.97);
-        border-right: 1px solid var(--green-dim);
+        background: rgba(15,0,9,0.97);
+        border-right: 1px solid var(--pink-dim);
         z-index: 200; transform: translateX(-100%);
         transition: transform 0.3s ease;
         display: flex; flex-direction: column; padding: 20px 0;
@@ -126,14 +127,14 @@
       #sidebar.open { transform: translateX(0); }
       .sidebar-header {
         padding: 10px 20px 20px;
-        border-bottom: 1px solid rgba(0,255,65,0.15);
+        border-bottom: 1px solid rgba(255,45,149,0.18);
         display: flex; justify-content: space-between; align-items: center;
       }
       .sidebar-close {
-        background: none; border: none; color: var(--green-dim);
+        background: none; border: none; color: var(--pink-dim);
         font-size: 1rem; cursor: pointer; transition: color 0.2s;
       }
-      .sidebar-close:hover { color: var(--green); }
+      .sidebar-close:hover { color: var(--pink); }
       .sidebar-links { padding: 16px 12px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
       .sidebar-link {
         display: flex; align-items: center; gap: 10px;
@@ -144,14 +145,14 @@
         transition: all 0.2s;
       }
       .sidebar-link:hover {
-        color: var(--green); border-left-color: var(--green);
-        background: rgba(0,255,65,0.05);
-        text-shadow: 0 0 6px var(--green);
+        color: var(--pink); border-left-color: var(--pink);
+        background: rgba(255,45,149,0.06);
+        text-shadow: 0 0 6px var(--pink);
       }
       .sidebar-link i { width: 16px; font-size: 0.85rem; }
       .sidebar-footer {
         padding: 16px 20px;
-        border-top: 1px solid rgba(0,255,65,0.1);
+        border-top: 1px solid rgba(255,45,149,0.12);
         font-size: 0.7rem; color: var(--text-dim);
       }
       #overlay {
@@ -171,20 +172,20 @@
       }
       .terminal-badge {
         display: inline-flex; align-items: center; gap: 8px;
-        border: 1px solid var(--green-dim);
+        border: 1px solid var(--pink-dim);
         padding: 5px 14px; font-size: 0.7rem;
         letter-spacing: 2px; text-transform: uppercase;
-        color: var(--green-dim); margin-bottom: 28px;
+        color: var(--pink-dim); margin-bottom: 28px;
         animation: pulse-border 2s ease-in-out infinite;
       }
       @keyframes pulse-border {
-        0%,100% { border-color: var(--green-dim); box-shadow: none; }
-        50% { border-color: var(--green); box-shadow: 0 0 12px rgba(0,255,65,0.2); }
+        0%,100% { border-color: var(--pink-dim); box-shadow: none; }
+        50% { border-color: var(--pink); box-shadow: 0 0 12px rgba(255,45,149,0.25); }
       }
       .status-dot {
         width: 6px; height: 6px; border-radius: 50%;
-        background: var(--green);
-        box-shadow: 0 0 8px var(--green);
+        background: var(--pink);
+        box-shadow: 0 0 8px var(--pink);
         animation: blink 1.2s step-end infinite;
       }
       @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
@@ -192,20 +193,20 @@
       .ascii-title {
         font-family: 'Share Tech Mono', monospace;
         font-size: clamp(1.6rem, 5vw, 3.2rem);
-        color: var(--green);
-        text-shadow: 0 0 20px rgba(0,255,65,0.5), 0 0 40px rgba(0,255,65,0.2);
+        color: var(--pink);
+        text-shadow: 0 0 20px rgba(255,45,149,0.55), 0 0 40px rgba(255,45,149,0.25);
         letter-spacing: 4px;
         margin-bottom: 8px;
         animation: glitch 4s infinite;
       }
       @keyframes glitch {
-        0%,96%,100% { text-shadow: 0 0 20px rgba(0,255,65,0.5); transform: none; }
-        97% { text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; transform: skewX(-1deg); }
-        98% { text-shadow: 2px 0 #ff0000, -2px 0 #00ffff; transform: skewX(1deg); }
-        99% { text-shadow: 0 0 20px rgba(0,255,65,0.5); transform: none; }
+        0%,96%,100% { text-shadow: 0 0 20px rgba(255,45,149,0.5); transform: none; }
+        97% { text-shadow: -2px 0 #00e5ff, 2px 0 #ffea00; transform: skewX(-1deg); }
+        98% { text-shadow: 2px 0 #00e5ff, -2px 0 #ffea00; transform: skewX(1deg); }
+        99% { text-shadow: 0 0 20px rgba(255,45,149,0.5); transform: none; }
       }
       .ascii-sub {
-        font-size: 0.75rem; color: var(--green-dim);
+        font-size: 0.75rem; color: var(--pink-dim);
         letter-spacing: 6px; text-transform: uppercase;
         margin-bottom: 32px;
       }
@@ -214,7 +215,7 @@
         max-width: 500px; margin: 0 auto 36px;
         line-height: 1.8;
       }
-      .hero-desc span { color: var(--green); }
+      .hero-desc span { color: var(--pink); }
 
       .btn-group { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 60px; }
       .btn {
@@ -225,21 +226,21 @@
         transition: all 0.2s; position: relative; overflow: hidden;
       }
       .btn-primary {
-        background: var(--green); color: #000; font-weight: 700;
-        box-shadow: 0 0 20px rgba(0,255,65,0.3);
+        background: var(--pink); color: #17000d; font-weight: 700;
+        box-shadow: 0 0 20px rgba(255,45,149,0.35);
       }
       .btn-primary:hover {
-        background: #00ff00;
-        box-shadow: 0 0 30px rgba(0,255,65,0.6);
+        background: #ff59ab;
+        box-shadow: 0 0 30px rgba(255,45,149,0.65);
         transform: translateY(-2px);
       }
       .btn-outline {
-        background: transparent; color: var(--green);
-        border: 1px solid var(--green-dim);
+        background: transparent; color: var(--pink);
+        border: 1px solid var(--pink-dim);
       }
       .btn-outline:hover {
-        border-color: var(--green); background: var(--green-glow);
-        box-shadow: 0 0 16px rgba(0,255,65,0.2);
+        border-color: var(--pink); background: var(--pink-glow);
+        box-shadow: 0 0 16px rgba(255,45,149,0.25);
         transform: translateY(-2px);
       }
 
@@ -249,22 +250,22 @@
         gap: 12px; max-width: 480px; width: 100%;
       }
       .stat {
-        border: 1px solid rgba(0,255,65,0.15);
+        border: 1px solid rgba(255,45,149,0.18);
         padding: 14px 10px; text-align: center;
-        background: rgba(0,255,65,0.02);
+        background: rgba(255,45,149,0.04);
         transition: border-color 0.2s, box-shadow 0.2s;
       }
       .stat:hover {
-        border-color: rgba(0,255,65,0.4);
-        box-shadow: 0 0 12px rgba(0,255,65,0.08);
+        border-color: rgba(255,45,149,0.45);
+        box-shadow: 0 0 12px rgba(255,45,149,0.1);
       }
-      .stat-val { font-size: 1.4rem; font-weight: 700; color: var(--green); text-shadow: 0 0 10px rgba(0,255,65,0.4); }
+      .stat-val { font-size: 1.4rem; font-weight: 700; color: var(--pink); text-shadow: 0 0 10px rgba(255,45,149,0.45); }
       .stat-label { font-size: 0.65rem; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
 
       /* Divider */
       .divider {
         height: 1px; width: 100%;
-        background: linear-gradient(90deg, transparent, var(--green-dim), transparent);
+        background: linear-gradient(90deg, transparent, var(--pink-dim), transparent);
         position: relative; z-index: 10;
       }
 
@@ -273,38 +274,38 @@
       .section-inner { max-width: 1100px; margin: 0 auto; }
       .section-title {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 1.4rem; color: var(--green);
-        text-shadow: 0 0 10px rgba(0,255,65,0.3);
+        font-size: 1.4rem; color: var(--pink);
+        text-shadow: 0 0 10px rgba(255,45,149,0.35);
         letter-spacing: 3px; text-transform: uppercase;
         margin-bottom: 8px;
       }
-      .section-title::before { content: '> '; color: var(--green-dim); }
+      .section-title::before { content: '> '; color: var(--pink-dim); }
       .section-sub { font-size: 0.75rem; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 40px; }
 
       .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
       .feature-card {
-        border: 1px solid rgba(0,255,65,0.12);
-        padding: 24px; background: rgba(0,255,65,0.02);
+        border: 1px solid rgba(255,45,149,0.16);
+        padding: 24px; background: rgba(255,45,149,0.03);
         text-decoration: none; color: inherit;
         display: block; transition: all 0.25s;
         position: relative; overflow: hidden;
       }
       .feature-card::before {
         content: ''; position: absolute; top: 0; left: 0;
-        width: 3px; height: 0; background: var(--green);
+        width: 3px; height: 0; background: var(--pink);
         transition: height 0.3s ease;
       }
       .feature-card:hover::before { height: 100%; }
       .feature-card:hover {
-        border-color: rgba(0,255,65,0.35);
-        box-shadow: 0 0 24px rgba(0,255,65,0.08);
-        background: rgba(0,255,65,0.04);
+        border-color: rgba(255,45,149,0.4);
+        box-shadow: 0 0 24px rgba(255,45,149,0.1);
+        background: rgba(255,45,149,0.06);
         transform: translateY(-4px);
       }
       .card-icon {
-        font-size: 1.2rem; color: var(--green);
+        font-size: 1.2rem; color: var(--pink);
         margin-bottom: 14px;
-        text-shadow: 0 0 8px rgba(0,255,65,0.5);
+        text-shadow: 0 0 8px rgba(255,45,149,0.5);
       }
       .card-title { font-size: 0.85rem; color: var(--text); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
       .card-desc { font-size: 0.75rem; color: var(--text-dim); line-height: 1.7; }
@@ -313,73 +314,24 @@
       .cta { position: relative; z-index: 10; padding: 80px 20px; text-align: center; }
       .cta-box {
         max-width: 600px; margin: 0 auto;
-        border: 1px solid rgba(0,255,65,0.2);
+        border: 1px solid rgba(255,45,149,0.25);
         padding: 48px 32px;
-        background: rgba(0,255,65,0.02);
-        box-shadow: 0 0 40px rgba(0,255,65,0.05);
+        background: rgba(255,45,149,0.03);
+        box-shadow: 0 0 40px rgba(255,45,149,0.08);
       }
       .cta-title {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 1.6rem; color: var(--green);
-        text-shadow: 0 0 15px rgba(0,255,65,0.4);
+        font-size: 1.6rem; color: var(--pink);
+        text-shadow: 0 0 15px rgba(255,45,149,0.45);
         letter-spacing: 2px; margin-bottom: 16px;
       }
       .cta-desc { font-size: 0.8rem; color: var(--text-dim); line-height: 1.8; margin-bottom: 32px; }
-
-      /* Footer */
-      footer {
-        position: relative; z-index: 10;
-        border-top: 1px solid rgba(0,255,65,0.1);
-        padding: 40px 20px;
-        background: rgba(0,5,0,0.5);
-      }
-      .footer-inner { max-width: 1100px; margin: 0 auto; }
-      .footer-top { display: flex; gap: 40px; flex-wrap: wrap; margin-bottom: 32px; }
-      .footer-brand { flex: 1; min-width: 200px; }
-      .footer-logo {
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 1rem; color: var(--green);
-        text-shadow: 0 0 8px var(--green);
-        letter-spacing: 2px; margin-bottom: 10px;
-        text-decoration: none; display: block;
-      }
-      .footer-tagline { font-size: 0.7rem; color: var(--text-dim); line-height: 1.6; margin-bottom: 16px; }
-      .social-links { display: flex; gap: 8px; }
-      .social-link {
-        width: 32px; height: 32px;
-        border: 1px solid rgba(0,255,65,0.2);
-        display: flex; align-items: center; justify-content: center;
-        color: var(--text-dim); font-size: 0.8rem;
-        text-decoration: none; transition: all 0.2s;
-      }
-      .social-link:hover { color: var(--green); border-color: var(--green); box-shadow: 0 0 8px rgba(0,255,65,0.3); }
-      .footer-col h4 {
-        font-size: 0.65rem; color: var(--green-dim);
-        letter-spacing: 2px; text-transform: uppercase;
-        margin-bottom: 14px;
-      }
-      .footer-links { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-      .footer-links a {
-        color: var(--text-dim); text-decoration: none;
-        font-size: 0.75rem; transition: all 0.2s;
-        display: flex; align-items: center; gap: 6px;
-      }
-      .footer-links a::before { content: '//'; color: var(--green-dim); font-size: 0.65rem; }
-      .footer-links a:hover { color: var(--green); text-shadow: 0 0 6px rgba(0,255,65,0.4); }
-      .footer-bottom {
-        border-top: 1px solid rgba(0,255,65,0.08);
-        padding-top: 20px; text-align: center;
-        font-size: 0.7rem; color: var(--text-dim);
-      }
-      .footer-bottom a { color: var(--green-dim); text-decoration: none; transition: color 0.2s; }
-      .footer-bottom a:hover { color: var(--green); }
 
       @media (max-width: 768px) {
         .nav-links { display: none; }
         .nav-btn.hidden-mobile { display: none; }
         .menu-btn { display: block; }
         .stats { grid-template-columns: repeat(3,1fr); }
-        .footer-top { flex-direction: column; gap: 24px; }
       }
 
       /* Cursor blink on title */
@@ -387,18 +339,16 @@
     </style>
   </head>
   <body>
-    <canvas id="matrix-canvas"></canvas>
+    <div id="bg-overlay"></div>
 
     <nav>
       <div class="nav-inner">
         <a href="/" class="logo">
-          <span class="logo-bracket">[</span>LordFarhan-XMD<span class="logo-bracket">]</span>
+          <span class="logo-bracket">[</span>LordFarhanBot<span class="logo-bracket">]</span>
         </a>
         <div class="nav-links">
-          <a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank" class="nav-link"><i class="fab fa-github"></i> Source</a>
           <a href="/pair" class="nav-link"><i class="fas fa-link"></i> Pair Code</a>
           <a href="/qr" class="nav-link"><i class="fas fa-qrcode"></i> QR Code</a>
-          <a href="https://t.me/iamtoxyic" target="_blank" class="nav-link"><i class="fab fa-telegram"></i> Support</a>
         </div>
         <div style="display:flex;align-items:center;gap:10px;">
           <a href="/pair" class="nav-btn hidden-mobile"><i class="fas fa-terminal"></i> Get Session</a>
@@ -410,27 +360,24 @@
     <div id="overlay"></div>
     <aside id="sidebar">
       <div class="sidebar-header">
-        <span class="logo" style="font-size:0.85rem;">[LordFarhan-XMD]</span>
+        <span class="logo" style="font-size:0.85rem;">[LordFarhanBot]</span>
         <button class="sidebar-close" id="closeBtn"><i class="fas fa-times"></i></button>
       </div>
       <nav class="sidebar-links">
         <a href="/" class="sidebar-link"><i class="fas fa-home"></i> Home</a>
         <a href="/pair" class="sidebar-link"><i class="fas fa-link"></i> Pair Code</a>
         <a href="/qr" class="sidebar-link"><i class="fas fa-qrcode"></i> QR Code</a>
-        <a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank" class="sidebar-link"><i class="fab fa-github"></i> Source Code</a>
-        <a href="https://t.me/iamtoxyic" target="_blank" class="sidebar-link"><i class="fab fa-telegram"></i> Support</a>
-        <a href="https://whatsapp.com/channel/0029Vb8ANT4J93weNOlcux3g" target="_blank" class="sidebar-link"><i class="fab fa-whatsapp"></i> WA Channel</a>
       </nav>
-      <div class="sidebar-footer">// powered by LordFarhan-XMD</div>
+      <div class="sidebar-footer">// powered by LordFarhanBot</div>
     </aside>
 
     <section class="hero">
       <div class="terminal-badge"><span class="status-dot"></span> System Online</div>
-      <h1 class="ascii-title">LordFarhan-XMD<span class="cursor">_</span></h1>
+      <h1 class="ascii-title">LordFarhanBot<span class="cursor">_</span></h1>
       <p class="ascii-sub">WhatsApp Session Generator</p>
       <p class="hero-desc">
         Advanced WhatsApp bot session generator.<br>
-        <span>Pair code</span> and <span>QR code</span> login — fast, encrypted, always online.
+        <span>Pair code</span> and <span>QR code</span> login — fast, encrypted, sent straight to your DM.
       </p>
       <div class="btn-group">
         <a href="/pair" class="btn btn-primary"><i class="fas fa-link"></i> Pair Code</a>
@@ -438,7 +385,7 @@
       </div>
       <div class="stats">
         <div class="stat"><div class="stat-val">2</div><div class="stat-label">Login Methods</div></div>
-        <div class="stat"><div class="stat-val">100%</div><div class="stat-label">Open Source</div></div>
+        <div class="stat"><div class="stat-val">DM</div><div class="stat-label">Direct Delivery</div></div>
         <div class="stat"><div class="stat-val">24/7</div><div class="stat-label">Online</div></div>
       </div>
     </section>
@@ -460,21 +407,11 @@
             <h3 class="card-title">QR Code Login</h3>
             <p class="card-desc">Classic QR scanning for a fast, seamless WhatsApp connection.</p>
           </a>
-          <a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank" class="feature-card">
-            <div class="card-icon"><i class="fas fa-code"></i></div>
-            <h3 class="card-title">Open Source</h3>
-            <p class="card-desc">Full codebase on GitHub. Fork, customize, and deploy your own instance.</p>
-          </a>
-          <a href="https://t.me/iamtoxyic" target="_blank" class="feature-card">
-            <div class="card-icon"><i class="fas fa-headset"></i></div>
-            <h3 class="card-title">Support</h3>
-            <p class="card-desc">Get help from the developer directly on Telegram.</p>
-          </a>
-          <a href="https://whatsapp.com/channel/0029Vb8ANT4J93weNOlcux3g" target="_blank" class="feature-card">
-            <div class="card-icon"><i class="fab fa-whatsapp"></i></div>
-            <h3 class="card-title">Updates Channel</h3>
-            <p class="card-desc">Follow the WA channel for latest features and announcements.</p>
-          </a>
+          <div class="feature-card" style="cursor:default;">
+            <div class="card-icon"><i class="fas fa-paper-plane"></i></div>
+            <h3 class="card-title">Direct to DM</h3>
+            <p class="card-desc">Your session is delivered straight to your own WhatsApp — no groups, no channels.</p>
+          </div>
           <div class="feature-card" style="cursor:default;">
             <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
             <h3 class="card-title">Encrypted Sessions</h3>
@@ -489,81 +426,15 @@
     <section class="cta">
       <div class="cta-box">
         <h2 class="cta-title">> Initialize Session_</h2>
-        <p class="cta-desc">Get your session ID and deploy LordFarhan-XMD bot in minutes. Choose your preferred login method below.</p>
+        <p class="cta-desc">Get your session ID and deploy LordFarhanBot in minutes. Choose your preferred login method below.</p>
         <div class="btn-group">
           <a href="/pair" class="btn btn-primary"><i class="fas fa-link"></i> Pair Code</a>
-          <a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank" class="btn btn-outline"><i class="fab fa-github"></i> GitHub</a>
+          <a href="/qr" class="btn btn-outline"><i class="fas fa-qrcode"></i> QR Code</a>
         </div>
       </div>
     </section>
 
-    <div class="divider"></div>
-
-    <footer>
-      <div class="footer-inner">
-        <div class="footer-top">
-          <div class="footer-brand">
-            <a href="/" class="footer-logo">[LordFarhan-XMD]</a>
-            <p class="footer-tagline">Advanced WhatsApp bot session generator. Powered by Baileys.</p>
-            <div class="social-links">
-              <a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank" class="social-link"><i class="fab fa-github"></i></a>
-              <a href="https://t.me/iamtoxyic" target="_blank" class="social-link"><i class="fab fa-telegram"></i></a>
-              <a href="https://whatsapp.com/channel/0029Vb8ANT4J93weNOlcux3g" target="_blank" class="social-link"><i class="fab fa-whatsapp"></i></a>
-            </div>
-          </div>
-          <div class="footer-col">
-            <h4>Navigation</h4>
-            <ul class="footer-links">
-              <li><a href="/pair">Pair Code</a></li>
-              <li><a href="/qr">QR Code</a></li>
-              <li><a href="https://github.com/DarkLordFarhan/LordFarhan-XMD" target="_blank">Source Code</a></li>
-              <li><a href="/health">Health Check</a></li>
-            </ul>
-          </div>
-          <div class="footer-col">
-            <h4>Connect</h4>
-            <ul class="footer-links">
-              <li><a href="https://t.me/iamtoxyic" target="_blank">Telegram Support</a></li>
-              <li><a href="https://whatsapp.com/channel/0029Vb8ANT4J93weNOlcux3g" target="_blank">WhatsApp Channel</a></li>
-              <li><a href="https://github.com/DarkLordFarhan" target="_blank">GitHub Profile</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="footer-bottom">
-          <span>&copy; <span id="yr"></span> LordFarhan-XMD &mdash; Built by <a href="https://github.com/DarkLordFarhan" target="_blank">LordFarhan</a></span>
-        </div>
-      </div>
-    </footer>
-
     <script>
-      document.getElementById('yr').textContent = new Date().getFullYear();
-
-      // Matrix rain
-      const canvas = document.getElementById('matrix-canvas');
-      const ctx = canvas.getContext('2d');
-      function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-      resizeCanvas();
-      window.addEventListener('resize', resizeCanvas);
-      const chars = 'LORDFARHAN01XMD!@#$%アイウエオカキクケコサシスセソタチツ'.split('');
-      const fontSize = 13;
-      let cols = Math.floor(canvas.width / fontSize);
-      let drops = Array(cols).fill(1);
-      function drawMatrix() {
-        ctx.fillStyle = 'rgba(0,0,0,0.05)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#00ff41';
-        ctx.font = fontSize + 'px Share Tech Mono, monospace';
-        cols = Math.floor(canvas.width / fontSize);
-        if (drops.length < cols) drops = drops.concat(Array(cols - drops.length).fill(1));
-        for (let i = 0; i < cols; i++) {
-          const char = chars[Math.floor(Math.random() * chars.length)];
-          ctx.fillText(char, i * fontSize, drops[i] * fontSize);
-          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-          drops[i]++;
-        }
-      }
-      setInterval(drawMatrix, 50);
-
       // Sidebar
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('overlay');

@@ -2,7 +2,7 @@ const {
     giftedId,
     removeFile
 } = require('../gift');
-const { SESSION_PREFIX, GC_JID, BOT_REPO, WA_CHANNEL, MSG_FOOTER } = require('../config');
+const { SESSION_PREFIX, BOT_REPO } = require('../config');
 const { isConfigured, saveSession } = require('../gift/sessionStore');
 const QRCode = require('qrcode');
 const express = require('express');
@@ -18,7 +18,7 @@ const {
     Browsers,
     delay,
     fetchLatestBaileysVersion
-} = require("@whiskeysockets/baileys");
+} = require("baileys");
 
 const sessionDir = path.join(__dirname, "session");
 
@@ -61,7 +61,7 @@ router.get('/session', async (req, res) => {
                             <!DOCTYPE html>
                             <html>
                             <head>
-                                <title>ATASSA-MD | QR CODE</title>
+                                <title>LordFarhanBot | QR CODE</title>
                                 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
                                 <style>
                                     body {
@@ -70,7 +70,7 @@ router.get('/session', async (req, res) => {
                                         align-items: center;
                                         min-height: 100vh;
                                         margin: 0;
-                                        background-color: #000;
+                                        background-color: #0a0006;
                                         font-family: Arial, sans-serif;
                                         color: #fff;
                                         text-align: center;
@@ -96,23 +96,23 @@ router.get('/session', async (req, res) => {
                                         padding: 10px;
                                         background: white;
                                         border-radius: 20px;
-                                        box-shadow: 0 0 0 10px rgba(255,255,255,0.1),
-                                                    0 0 0 20px rgba(255,255,255,0.05),
-                                                    0 0 30px rgba(255,255,255,0.2);
+                                        box-shadow: 0 0 0 10px rgba(255,45,149,0.1),
+                                                    0 0 0 20px rgba(255,45,149,0.05),
+                                                    0 0 30px rgba(255,45,149,0.25);
                                     }
                                     .qr-code img {
                                         width: 100%;
                                         height: 100%;
                                     }
                                     h1 {
-                                        color: #fff;
+                                        color: #ff2d95;
                                         margin: 0 0 15px 0;
                                         font-size: 28px;
                                         font-weight: 800;
-                                        text-shadow: 0 0 10px rgba(255,255,255,0.3);
+                                        text-shadow: 0 0 10px rgba(255,45,149,0.4);
                                     }
                                     p {
-                                        color: #ccc;
+                                        color: #e6a9c8;
                                         margin: 20px 0;
                                         font-size: 16px;
                                     }
@@ -120,7 +120,7 @@ router.get('/session', async (req, res) => {
                                         display: inline-block;
                                         padding: 12px 25px;
                                         margin-top: 15px;
-                                        background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);
+                                        background: linear-gradient(135deg, #ff2d95 0%, #b3005c 100%);
                                         color: white;
                                         text-decoration: none;
                                         border-radius: 30px;
@@ -139,13 +139,13 @@ router.get('/session', async (req, res) => {
                                     }
                                     @keyframes pulse {
                                         0% {
-                                            box-shadow: 0 0 0 0 rgba(255,255,255,0.4);
+                                            box-shadow: 0 0 0 0 rgba(255,45,149,0.4);
                                         }
                                         70% {
-                                            box-shadow: 0 0 0 15px rgba(255,255,255,0);
+                                            box-shadow: 0 0 0 15px rgba(255,45,149,0);
                                         }
                                         100% {
-                                            box-shadow: 0 0 0 0 rgba(255,255,255,0);
+                                            box-shadow: 0 0 0 0 rgba(255,45,149,0);
                                         }
                                     }
                                     @media (max-width: 480px) {
@@ -166,11 +166,11 @@ router.get('/session', async (req, res) => {
                             <body>
                                 <div class="container">
                                     ${(sessionType === 'short' && !isConfigured()) ? `
-                                    <div style="margin-bottom:18px;padding:12px 16px;border-radius:12px;border:1px solid rgba(96,165,250,0.3);background:rgba(30,58,138,0.25);display:flex;align-items:flex-start;gap:10px;text-align:left;">
+                                    <div style="margin-bottom:18px;padding:12px 16px;border-radius:12px;border:1px solid rgba(255,45,149,0.3);background:rgba(90,0,50,0.25);display:flex;align-items:flex-start;gap:10px;text-align:left;">
                                         <span style="font-size:1rem;margin-top:1px;flex-shrink:0;">ℹ️</span>
-                                        <p style="margin:0;font-size:0.78rem;color:#93c5fd;line-height:1.5;">Session store is not configured &mdash; automatically switched to <strong>Long session</strong>.</p>
+                                        <p style="margin:0;font-size:0.78rem;color:#ffb3d9;line-height:1.5;">Session store is not configured &mdash; automatically switched to <strong>Long session</strong>.</p>
                                     </div>` : ''}
-                                    <h1>ATASSA QR CODE</h1>
+                                    <h1>LORDFARHANBOT QR CODE</h1>
                                     <div class="qr-container">
                                         <div class="qr-code pulse">
                                             <img src="${qrImage}" alt="QR Code"/>
@@ -197,13 +197,7 @@ router.get('/session', async (req, res) => {
                 }
 
                 if (connection === "open") {
-                    try {
-                        await Gifted.groupAcceptInvite(GC_JID);
-                    } catch (e) {
-                        console.log("Group join error:", e.message);
-                    }
-
-                    await delay(10000);
+                    await delay(8000);
 
                     let sessionData = null;
                     let attempts = 0;
@@ -245,22 +239,19 @@ router.get('/session', async (req, res) => {
                             msgText = `*SESSION ID ✅*\n\n${shortSession}`;
                             msgButtons = [
                                 { name: 'cta_copy', buttonParamsJson: JSON.stringify({ display_text: 'Copy Session', copy_code: shortSession }) },
-                                { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text: 'Visit Bot Repo', url: BOT_REPO }) },
-                                { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text: 'Join WaChannel', url: WA_CHANNEL }) }
+                                { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text: 'Visit Bot Repo', url: BOT_REPO }) }
                             ];
                         } else {
                             msgText = `*SESSION ID ✅*\n\n${fullSession}`;
                             msgButtons = [
                                 { name: 'cta_copy', buttonParamsJson: JSON.stringify({ display_text: 'Copy Session', copy_code: fullSession }) },
-                                { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text: 'Visit Bot Repo', url: BOT_REPO }) },
-                                { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text: 'Join WaChannel', url: WA_CHANNEL }) }
+                                { name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text: 'Visit Bot Repo', url: BOT_REPO }) }
                             ];
                         }
 
                         await sendButtons(Gifted, Gifted.user.id, {
                             title: '',
                             text: msgText,
-                            footer: MSG_FOOTER,
                             buttons: msgButtons
                         });
 
