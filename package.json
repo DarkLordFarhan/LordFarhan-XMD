@@ -10,7 +10,7 @@
   "author": "LordFarhan",
   "license": "MIT",
   "dependencies": {
-    "baileys": "^7.0.0-rc13",
+    "@whiskeysockets/baileys": "^6.7.21",
     "body-parser": "^2.2.2",
     "dotenv": "^17.3.1",
     "express": "*",

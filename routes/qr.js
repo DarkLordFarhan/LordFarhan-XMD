@@ -18,7 +18,7 @@ const {
     Browsers,
     delay,
     fetchLatestBaileysVersion
-} = require("baileys");
+} = require("@whiskeysockets/baileys");
 
 const sessionDir = path.join(__dirname, "session");
 

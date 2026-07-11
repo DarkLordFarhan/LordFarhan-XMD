@@ -19,7 +19,7 @@ const {
     fetchLatestBaileysVersion,
     makeCacheableSignalKeyStore,
     Browsers
-} = require("baileys");
+} = require("@whiskeysockets/baileys");
 
 const sessionDir = path.join(__dirname, "session");
 
