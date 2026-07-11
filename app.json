@@ -1,7 +1,7 @@
 {
     "name": "LordFarhanBot Session Generator",
     "description": "WhatsApp Session Generator for LordFarhanBot",
-    "repository": "https://github.com/DarkLordFarhan/LordFarhan-XMD",
+    "repository": "https://github.com/DarkLordFarhan/LordFarhanBot-MD.git",
     "keywords": ["LordFarhanBot"],
     "success_url": "/",
     "buildpacks": [{ "url": "https://github.com/heroku/heroku-buildpack-nodejs#latest" } ],
