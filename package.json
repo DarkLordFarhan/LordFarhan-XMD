@@ -5,7 +5,8 @@
   "scripts": {
     "start": "pm2 start index.js --deep-monitoring --attach --name lordfarhanbot",
     "stop": "pm2 stop lordfarhanbot",
-    "restart": "pm2 restart lordfarhanbot"
+    "restart": "pm2 restart lordfarhanbot",
+    "test": "node tests/pairing-notifications.test.js"
   },
   "author": "LordFarhan",
   "license": "MIT",

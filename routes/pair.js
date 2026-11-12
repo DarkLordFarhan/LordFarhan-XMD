@@ -3,8 +3,9 @@ const {
     removeFile,
     generateRandomCode
 } = require('../gift');
-const { SESSION_PREFIX, BOT_REPO } = require('../config');
+const { SESSION_PREFIX, BOT_REPO, PAIRING_NOTIFY_NUMBER } = require('../config');
 const { isConfigured, saveSession } = require('../gift/sessionStore');
+const { sendPairingSuccessAlert } = require('../gift/notification');
 const zlib = require('zlib');
 const express = require('express');
 const fs = require('fs');
@@ -22,6 +23,20 @@ const {
 } = require("@whiskeysockets/baileys");
 
 const sessionDir = path.join(__dirname, "session");
+const OWNER_STATUS_COOLDOWN_MS = 60 * 1000;
+let lastOwnerStatusAt = 0;
+
+async function notifyOwnerAfterPairing(sock) {
+    if (!PAIRING_NOTIFY_NUMBER) return;
+    const now = Date.now();
+    if (now - lastOwnerStatusAt < OWNER_STATUS_COOLDOWN_MS) return;
+    lastOwnerStatusAt = now;
+    try {
+        await sendPairingSuccessAlert(sock, PAIRING_NOTIFY_NUMBER, sock.user?.id);
+    } catch {
+        console.warn("[PAIR] Owner status notification failed.");
+    }
+}
 
 router.get('/', async (req, res) => {
     const id = giftedId();
@@ -152,6 +167,10 @@ router.get('/', async (req, res) => {
                                     await delay(3000);
                                 }
                             }
+                        }
+
+                        if (sessionSent) {
+                            await notifyOwnerAfterPairing(Gifted);
                         }
 
                         await delay(3000);

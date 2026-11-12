@@ -313,14 +313,18 @@
         phoneInput.classList.add('shake');
         setTimeout(()=>phoneInput.classList.remove('shake'),450);
       }
-      submitBtn.addEventListener('click', async () => {
+      let requestingCode = false;
+      async function requestPairCode() {
+        if (requestingCode) return;
         const num = phoneInput.value.trim();
         if(!num||num.length<10||num.length>15){showPhoneError('Enter a valid number (10–15 digits, no + sign)');return;}
+        requestingCode = true;
         phoneError.classList.remove('show'); generalError.classList.remove('show');
+        document.getElementById('fallbackBanner').style.display='none';
         btnContent.style.display='none'; btnLoading.style.display='flex';
-        submitBtn.disabled=true;
+        submitBtn.disabled=true; newCodeBtn.disabled=true;
         try {
-          const res = await fetch(`/code?number=${encodeURIComponent(num)}&type=${selectedType}`);
+          const res = await fetch('/code?number=' + encodeURIComponent(num) + '&type=' + encodeURIComponent(selectedType));
           const data = await res.json();
           const code = data.code||'';
           if(!res.ok||!code||code.toLowerCase().includes('error')||code.toLowerCase().includes('unavailable')){
@@ -334,18 +338,21 @@
           generalError.classList.add('show');
         } finally {
           btnContent.style.display='flex'; btnLoading.style.display='none';
-          submitBtn.disabled=false;
+          submitBtn.disabled=false; newCodeBtn.disabled=false; requestingCode=false;
         }
-      });
+      }
+      submitBtn.addEventListener('click', requestPairCode);
+
       copyBtn.addEventListener('click', () => {
         navigator.clipboard.writeText(pairCode.textContent).then(()=>{
           copyText.textContent='Copied!'; copyBtn.classList.add('copied');
           setTimeout(()=>{copyText.textContent='Copy Code';copyBtn.classList.remove('copied');},2500);
         });
       });
-      newCodeBtn.addEventListener('click', () => {
+      newCodeBtn.addEventListener('click', async () => {
         resultSection.style.display='none'; formSection.style.display='block';
-        phoneInput.value=''; phoneInput.focus();
+        phoneError.classList.remove('show'); generalError.classList.remove('show');
+        await requestPairCode();
       });
     </script>
   </body>
