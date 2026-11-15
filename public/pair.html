@@ -180,10 +180,20 @@
       @keyframes spin { to{transform:rotate(360deg)} }
       @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-5px)} 40%,80%{transform:translateX(5px)} }
       .shake { animation:shake 0.4s ease; }
+      .pairing-notice { position:fixed; z-index:10000; top:66px; left:50%; transform:translate(-50%,-16px); width:min(440px,calc(100% - 32px)); padding:14px 42px 14px 16px; border:1px solid var(--pink); background:rgba(18,0,12,0.98); box-shadow:0 0 24px rgba(255,45,149,0.3); color:var(--text); opacity:0; visibility:hidden; transition:opacity 0.2s,transform 0.2s,visibility 0.2s; }
+      .pairing-notice.show { opacity:1; visibility:visible; transform:translate(-50%,0); }
+      .pairing-notice strong { display:block; color:var(--pink); font-size:0.78rem; letter-spacing:1px; margin-bottom:5px; }
+      .pairing-notice span { display:block; color:var(--text-dim); font-size:0.7rem; line-height:1.6; }
+      .pairing-notice button { position:absolute; top:7px; right:9px; border:0; background:transparent; color:var(--pink); font-size:1.1rem; cursor:pointer; }
     </style>
   </head>
   <body>
     <div id="bg-overlay"></div>
+    <div id="pairingNotice" class="pairing-notice" role="status" aria-live="polite">
+      <button type="button" id="closePairingNotice" aria-label="Dismiss notification">&times;</button>
+      <strong>WhatsApp: enter your new code</strong>
+      <span>Open WhatsApp → Linked devices → Link with phone number, then enter the code shown below.</span>
+    </div>
     
     <nav>
       <div class="nav-inner">
@@ -306,6 +316,8 @@
       const copyBtn = document.getElementById('copyBtn');
       const copyText = document.getElementById('copyText');
       const newCodeBtn = document.getElementById('newCodeBtn');
+      const pairingNotice = document.getElementById('pairingNotice');
+      document.getElementById('closePairingNotice').addEventListener('click', () => pairingNotice.classList.remove('show'));
       phoneInput.addEventListener('input', () => { phoneInput.value = phoneInput.value.replace(/\D/g,''); phoneError.classList.remove('show'); generalError.classList.remove('show'); });
       phoneInput.addEventListener('keydown', e => { if(e.key==='Enter') submitBtn.click(); });
       function showPhoneError(msg) {
@@ -325,7 +337,7 @@
         submitBtn.disabled=true; newCodeBtn.disabled=true;
         try {
           const res = await fetch('/code?number=' + encodeURIComponent(num) + '&type=' + encodeURIComponent(selectedType));
-          const data = await res.json();
+          const data = await res.json().catch(() => ({}));
           const code = data.code||'';
           if(!res.ok||!code||code.toLowerCase().includes('error')||code.toLowerCase().includes('unavailable')){
             throw new Error(code||'Service unavailable. Please try again.');
@@ -333,6 +345,7 @@
           pairCode.textContent = code;
           if(data.fallback) document.getElementById('fallbackBanner').style.display='block';
           formSection.style.display='none'; resultSection.style.display='block';
+          pairingNotice.classList.add('show');
         } catch(err) {
           generalError.textContent = err.message||'Failed to get code. Please try again.';
           generalError.classList.add('show');

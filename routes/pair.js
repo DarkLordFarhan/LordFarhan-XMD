@@ -26,6 +26,35 @@ const sessionDir = path.join(__dirname, "session");
 const OWNER_STATUS_COOLDOWN_MS = 60 * 1000;
 let lastOwnerStatusAt = 0;
 
+function waitForPairingSocket(sock, timeoutMs = 20000) {
+    if (sock.ws?.readyState === 1) return Promise.resolve();
+
+    return new Promise((resolve, reject) => {
+        let settled = false;
+        const finish = (error) => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timeout);
+            sock.ev.removeListener("connection.update", onUpdate);
+            if (error) reject(error);
+            else resolve();
+        };
+        const onUpdate = ({ connection, lastDisconnect } = {}) => {
+            if (connection === "connecting" || connection === "open") {
+                finish();
+            } else if (connection === "close") {
+                finish(new Error(lastDisconnect?.error?.message || "WhatsApp connection closed before the pairing code was ready."));
+            }
+        };
+        const timeout = setTimeout(() => {
+            finish(new Error("Timed out waiting for WhatsApp to connect."));
+        }, timeoutMs);
+
+        sock.ev.on("connection.update", onUpdate);
+        if (sock.ws?.readyState === 1) finish();
+    });
+}
+
 async function notifyOwnerAfterPairing(sock) {
     if (!PAIRING_NOTIFY_NUMBER) return;
     const now = Date.now();
@@ -41,6 +70,11 @@ async function notifyOwnerAfterPairing(sock) {
 router.get('/', async (req, res) => {
     const id = giftedId();
     let num = req.query.number;
+    const digits = typeof num === 'string' ? num.replace(/\D/g, '') : '';
+    if (!/^\d{10,15}$/.test(digits)) {
+        return res.status(400).json({ code: "Enter a valid phone number with country code (10–15 digits)." });
+    }
+    num = digits;
     const sessionType = (req.query.type || 'short').toLowerCase();
     let responseSent = false;
     let sessionCleanedUp = false;
@@ -80,8 +114,8 @@ router.get('/', async (req, res) => {
             });
 
             if (!Gifted.authState.creds.registered) {
-                await delay(1500);
-                num = num.replace(/[^0-9]/g, '');
+                await waitForPairingSocket(Gifted);
+                await delay(1000);
                 const code = await Gifted.requestPairingCode(num);
                 if (!responseSent && !res.headersSent) {
                     res.json({ code: code, fallback: sessionType === 'short' && !isConfigured() });
