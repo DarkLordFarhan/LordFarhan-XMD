@@ -1,6 +1,17 @@
 (() => {
     const MUSIC_VIDEO_ID = 'a2OiVGySjOY';
     const THEME_STORAGE_KEY = 'lordfarhan-neon-theme';
+    const THEMES = [
+        { id: 'pink', label: 'Pink' },
+        { id: 'cyan', label: 'Cyan' },
+        { id: 'violet', label: 'Violet' },
+        { id: 'lime', label: 'Lime' },
+        { id: 'blue', label: 'Blue' },
+        { id: 'amber', label: 'Amber' },
+        { id: 'red', label: 'Red' },
+        { id: 'mint', label: 'Mint' },
+        { id: 'gold', label: 'Gold' },
+    ];
 
     const controls = document.createElement('div');
     controls.className = 'site-controls';
@@ -8,15 +19,16 @@
         <section class="site-controls__player" id="moonlightPlayer" aria-label="Moonlight music player" hidden>
             <div class="site-controls__player-head">
                 <span>MOTI THE NRG — MOONLIGHT</span>
-                <span>
+                <span class="site-controls__player-links">
                     <a href="https://www.youtube.com/watch?v=${MUSIC_VIDEO_ID}" target="_blank" rel="noopener noreferrer" aria-label="Open the official Moonlight video on YouTube">Official video</a>
                     <button class="site-controls__close" id="closeMoonlight" type="button" aria-label="Close music player">&times;</button>
                 </span>
             </div>
-            <iframe class="site-controls__video" id="moonlightFrame" title="MOTI THE NRG - MOONLIGHT official music video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            <iframe class="site-controls__video" id="moonlightFrame" title="MOTI THE NRG - MOONLIGHT official music video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="eager" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            <p class="site-controls__player-hint">Autoplay is attempted on page load. If your browser blocks sound, press Play in the video.</p>
         </section>
         <div class="site-controls__actions">
-            <button class="site-controls__button" id="neonThemeToggle" type="button" aria-pressed="false" title="Switch neon color palette">
+            <button class="site-controls__button" id="neonThemeToggle" type="button" title="Cycle neon color palette">
                 <i class="fas fa-lightbulb" aria-hidden="true"></i><span id="neonThemeLabel">Neon: Pink</span>
             </button>
             <button class="site-controls__button" id="moonlightToggle" type="button" aria-expanded="false" aria-controls="moonlightPlayer">
@@ -34,25 +46,40 @@
     const frame = controls.querySelector('#moonlightFrame');
     const closeMusicButton = controls.querySelector('#closeMoonlight');
 
-    let theme = 'pink';
+    function getThemeIndex(themeId) {
+        const index = THEMES.findIndex((themeItem) => themeItem.id === themeId);
+        return index < 0 ? 0 : index;
+    }
+
+    let themeIndex = 0;
     try {
-        theme = localStorage.getItem(THEME_STORAGE_KEY) === 'cyan' ? 'cyan' : 'pink';
+        themeIndex = getThemeIndex(localStorage.getItem(THEME_STORAGE_KEY));
     } catch {
-        // The control still works for this page if browser storage is unavailable.
+        // The color cycle still works on this page if browser storage is unavailable.
     }
 
     function applyTheme() {
-        document.body.dataset.neonTheme = theme;
-        const isCyan = theme === 'cyan';
-        themeButton.setAttribute('aria-pressed', String(isCyan));
-        themeButton.setAttribute('aria-label', `Neon color palette: ${isCyan ? 'cyan' : 'pink'}. Switch to ${isCyan ? 'pink' : 'cyan'}.`);
-        themeLabel.textContent = `Neon: ${isCyan ? 'Cyan' : 'Pink'}`;
+        const theme = THEMES[themeIndex];
+        const nextTheme = THEMES[(themeIndex + 1) % THEMES.length];
+        document.body.dataset.neonTheme = theme.id;
+        themeButton.setAttribute('aria-label', `Current neon color: ${theme.label}. Switch to ${nextTheme.label}.`);
+        themeButton.title = `Current: ${theme.label}. Tap to switch to ${nextTheme.label}.`;
+        themeLabel.textContent = `Neon: ${theme.label}`;
         const themeColor = getComputedStyle(document.body).getPropertyValue('--pink').trim();
-        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor || (isCyan ? '#39edf7' : '#ff2d95'));
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor || '#ff2d95');
         try {
-            localStorage.setItem(THEME_STORAGE_KEY, theme);
+            localStorage.setItem(THEME_STORAGE_KEY, theme.id);
         } catch {
             // Keep the selected palette for the current page.
+        }
+    }
+
+    function openMusicPlayer() {
+        player.hidden = false;
+        musicButton.setAttribute('aria-expanded', 'true');
+        musicLabel.textContent = 'Close music';
+        if (!frame.src || !frame.src.includes(MUSIC_VIDEO_ID)) {
+            frame.src = `https://www.youtube-nocookie.com/embed/${MUSIC_VIDEO_ID}?autoplay=1&controls=1&playsinline=1&rel=0`;
         }
     }
 
@@ -64,7 +91,7 @@
     }
 
     themeButton.addEventListener('click', () => {
-        theme = theme === 'pink' ? 'cyan' : 'pink';
+        themeIndex = (themeIndex + 1) % THEMES.length;
         applyTheme();
     });
 
@@ -73,12 +100,10 @@
             closeMusicPlayer();
             return;
         }
-        player.hidden = false;
-        musicButton.setAttribute('aria-expanded', 'true');
-        musicLabel.textContent = 'Close music';
-        frame.src = `https://www.youtube-nocookie.com/embed/${MUSIC_VIDEO_ID}?autoplay=1&controls=1&playsinline=1&rel=0`;
+        openMusicPlayer();
     });
 
     closeMusicButton.addEventListener('click', closeMusicPlayer);
     applyTheme();
+    openMusicPlayer();
 })();

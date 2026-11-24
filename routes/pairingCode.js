@@ -1,6 +1,6 @@
 const DEFAULT_PAIRING_READY_TIMEOUT_MS = 30000;
 
-function requestPairingCodeWhenReady(sock, phoneNumber, { timeoutMs = DEFAULT_PAIRING_READY_TIMEOUT_MS } = {}) {
+function requestPairingCodeWhenReady(sock, phoneNumber, { timeoutMs = DEFAULT_PAIRING_READY_TIMEOUT_MS, signal } = {}) {
     if (!sock?.ev || typeof sock.ev.on !== 'function' || typeof sock.requestPairingCode !== 'function') {
         return Promise.reject(new TypeError('A Baileys socket with pairing-code support is required.'));
     }
@@ -9,6 +9,9 @@ function requestPairingCodeWhenReady(sock, phoneNumber, { timeoutMs = DEFAULT_PA
     }
     if (sock.authState?.creds?.registered) {
         return Promise.reject(new Error('This WhatsApp session is already registered.'));
+    }
+    if (signal?.aborted) {
+        return Promise.reject(signal.reason || new Error('Pair-code request was cancelled.'));
     }
 
     return new Promise((resolve, reject) => {
@@ -21,9 +24,12 @@ function requestPairingCodeWhenReady(sock, phoneNumber, { timeoutMs = DEFAULT_PA
             settled = true;
             clearTimeout(timeout);
             sock.ev.removeListener?.('connection.update', onUpdate);
+            signal?.removeEventListener('abort', onAbort);
             if (error) reject(error);
             else resolve(code);
         };
+
+        const onAbort = () => finish(signal.reason || new Error('Pair-code request was cancelled.'));
 
         const onUpdate = ({ qr, connection, lastDisconnect } = {}) => {
             if (qr && !requestStarted) {
@@ -50,6 +56,7 @@ function requestPairingCodeWhenReady(sock, phoneNumber, { timeoutMs = DEFAULT_PA
             finish(new Error('Timed out waiting for WhatsApp to prepare a pairing code.'));
         }, timeoutMs);
 
+        signal?.addEventListener('abort', onAbort, { once: true });
         sock.ev.on('connection.update', onUpdate);
     });
 }

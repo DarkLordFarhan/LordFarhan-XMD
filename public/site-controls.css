@@ -9,6 +9,83 @@ body[data-neon-theme="cyan"] {
     --text-dim: #71a6ac;
 }
 
+body[data-neon-theme="violet"] {
+    --pink: #c77dff;
+    --pink-dim: #8f4fc2;
+    --pink-dark: #290a3f;
+    --pink-glow: rgba(199, 125, 255, 0.2);
+    --accent-rgb: 199, 125, 255;
+    --pink-hover: #dfb3ff;
+    --text: #f2e3ff;
+    --text-dim: #b18ac7;
+}
+
+body[data-neon-theme="lime"] {
+    --pink: #a4ff4f;
+    --pink-dim: #68b52d;
+    --pink-dark: #183600;
+    --pink-glow: rgba(164, 255, 79, 0.2);
+    --accent-rgb: 164, 255, 79;
+    --pink-hover: #caff8a;
+    --text: #efffe2;
+    --text-dim: #9ab17e;
+}
+
+body[data-neon-theme="blue"] {
+    --pink: #5b8dff;
+    --pink-dim: #3461c8;
+    --pink-dark: #0c1d45;
+    --pink-glow: rgba(91, 141, 255, 0.2);
+    --accent-rgb: 91, 141, 255;
+    --pink-hover: #8bb0ff;
+    --text: #e2ebff;
+    --text-dim: #879cc9;
+}
+
+body[data-neon-theme="amber"] {
+    --pink: #ffad42;
+    --pink-dim: #bf6b17;
+    --pink-dark: #3d2100;
+    --pink-glow: rgba(255, 173, 66, 0.2);
+    --accent-rgb: 255, 173, 66;
+    --pink-hover: #ffca7c;
+    --text: #fff1dc;
+    --text-dim: #c4a079;
+}
+
+body[data-neon-theme="red"] {
+    --pink: #ff5364;
+    --pink-dim: #c62f44;
+    --pink-dark: #410b13;
+    --pink-glow: rgba(255, 83, 100, 0.2);
+    --accent-rgb: 255, 83, 100;
+    --pink-hover: #ff8792;
+    --text: #ffe1e5;
+    --text-dim: #c08b93;
+}
+
+body[data-neon-theme="mint"] {
+    --pink: #41f0b2;
+    --pink-dim: #149966;
+    --pink-dark: #063522;
+    --pink-glow: rgba(65, 240, 178, 0.2);
+    --accent-rgb: 65, 240, 178;
+    --pink-hover: #83ffd3;
+    --text: #dbfff1;
+    --text-dim: #85c6ae;
+}
+
+body[data-neon-theme="gold"] {
+    --pink: #ffd43b;
+    --pink-dim: #b89013;
+    --pink-dark: #3d3100;
+    --pink-glow: rgba(255, 212, 59, 0.2);
+    --accent-rgb: 255, 212, 59;
+    --pink-hover: #ffe477;
+    --text: #fff8d8;
+    --text-dim: #c5b779;
+}
+
 .site-controls,
 .site-controls * {
     box-sizing: border-box;
@@ -79,6 +156,13 @@ body[data-neon-theme="cyan"] {
     letter-spacing: 0.05em;
 }
 
+.site-controls__player-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
 .site-controls__player-head a {
     color: var(--pink, #ff2d95);
     text-decoration: none;
@@ -99,6 +183,12 @@ body[data-neon-theme="cyan"] {
     height: 200px;
     border: 0;
     background: #000;
+}
+
+.site-controls__player-hint {
+    padding: 7px 10px;
+    color: var(--text-dim, #a3597e);
+    font: 400 0.6rem/1.4 'Fira Code', 'Share Tech Mono', monospace;
 }
 
 @media (max-width: 420px) {

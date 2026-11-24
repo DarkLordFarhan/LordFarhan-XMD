@@ -6,7 +6,8 @@
     "start": "pm2 start index.js --deep-monitoring --attach --name lordfarhanbot",
     "stop": "pm2 stop lordfarhanbot",
     "restart": "pm2 restart lordfarhanbot",
-    "test": "node tests/pairing-notifications.test.js && node tests/pairing-code-readiness.test.js"
+    "postinstall": "node scripts/patch-baileys-pairing.js",
+    "test": "node tests/pairing-notifications.test.js && node tests/pairing-code-readiness.test.js && node tests/pairing-lifecycle.test.js && node tests/baileys-pairing-patch.test.js"
   },
   "author": "LordFarhan",
   "license": "MIT",

@@ -51,11 +51,36 @@ async function testRejectsInvalidNumber() {
     assert.strictEqual(socket.ev.listenerCount('connection.update'), 0);
 }
 
+async function testAbortsWhenBrowserCancelsRequest() {
+    const socket = createSocket();
+    const controller = new AbortController();
+    const result = requestPairingCodeWhenReady(socket, '254712345678', {
+        timeoutMs: 1000,
+        signal: controller.signal,
+    });
+    controller.abort(new Error('browser cancelled'));
+    await assert.rejects(result, /browser cancelled/);
+    assert.strictEqual(socket.ev.listenerCount('connection.update'), 0);
+}
+
+async function testRejectsAnAlreadyAbortedRequest() {
+    const socket = createSocket();
+    const controller = new AbortController();
+    controller.abort(new Error('already cancelled'));
+    await assert.rejects(
+        requestPairingCodeWhenReady(socket, '254712345678', { signal: controller.signal }),
+        /already cancelled/,
+    );
+    assert.strictEqual(socket.ev.listenerCount('connection.update'), 0);
+}
+
 async function run() {
     await testWaitsForQrReadinessAndRequestsOnce();
     await testRejectsIfSocketClosesBeforeQr();
     await testTimesOutWithoutQr();
     await testRejectsInvalidNumber();
+    await testAbortsWhenBrowserCancelsRequest();
+    await testRejectsAnAlreadyAbortedRequest();
     console.log('Pairing-code readiness tests passed.');
 }
 
