@@ -50,7 +50,7 @@ function buildPatchedPairingRequest() {
                             {
                                 tag: 'companion_platform_id',
                                 attrs: {},
-                                content: getCompanionPlatformId(pairingBrowser)
+                                content: getPlatformId(pairingBrowser)
                             },
                             {
                                 tag: 'companion_platform_display',
@@ -97,7 +97,20 @@ function patchSocketSource(source) {
 
     const currentFunction = source.slice(start, end);
     if (currentFunction.includes(PATCH_MARKER) && currentFunction.includes("authState.creds.me = { id: jid, name: '~' }")) {
-        return { source, changed: false };
+        if (currentFunction.includes('content: getPlatformId(pairingBrowser)')) {
+            return { source, changed: false };
+        }
+        if (currentFunction.includes('content: getCompanionPlatformId(pairingBrowser)')) {
+            const correctedFunction = currentFunction.replace(
+                'content: getCompanionPlatformId(pairingBrowser)',
+                'content: getPlatformId(pairingBrowser)',
+            );
+            return {
+                source: source.slice(0, start) + correctedFunction + source.slice(end),
+                changed: true,
+            };
+        }
+        throw new Error('Baileys pairing acknowledgement patch was altered; refusing an unsafe repair.');
     }
     if (!currentFunction.includes('await sendNode({') || !currentFunction.includes('return authState.creds.pairingCode;')) {
         throw new Error('Baileys pairing-code source differs from the expected 6.7.24 implementation; refusing an unsafe patch.');
