@@ -6,12 +6,12 @@
     "start": "pm2 start index.js --deep-monitoring --attach --name lordfarhanbot",
     "stop": "pm2 stop lordfarhanbot",
     "restart": "pm2 restart lordfarhanbot",
-    "test": "node tests/pairing-notifications.test.js"
+    "test": "node tests/pairing-notifications.test.js && node tests/pairing-code-readiness.test.js"
   },
   "author": "LordFarhan",
   "license": "MIT",
   "dependencies": {
-    "@whiskeysockets/baileys": "^6.7.21",
+    "@whiskeysockets/baileys": "6.7.24",
     "body-parser": "^2.2.2",
     "dotenv": "^17.3.1",
     "express": "*",

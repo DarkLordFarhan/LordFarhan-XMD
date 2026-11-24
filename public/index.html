@@ -15,7 +15,9 @@
         --pink: #ff2d95;
         --pink-dim: #d6006b;
         --pink-dark: #3a0020;
-        --pink-glow: rgba(255,45,149,0.2);
+        --pink-glow: rgba(var(--accent-rgb), 0.2);
+        --accent-rgb: 255, 45, 149;
+        --pink-hover: #ff59ab;
         --bg: #0a0006;
         --bg2: #12000c;
         --text: #ffd6ec;
@@ -67,7 +69,7 @@
         background: rgba(10,0,6,0.92);
         border-bottom: 1px solid var(--pink-dim);
         backdrop-filter: blur(8px);
-        box-shadow: 0 0 20px rgba(255,45,149,0.12);
+        box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.12);
       }
       .nav-inner {
         max-width: 1100px; margin: 0 auto;
@@ -106,7 +108,7 @@
       .nav-btn:hover {
         background: var(--pink-glow);
         border-color: var(--pink);
-        box-shadow: 0 0 12px rgba(255,45,149,0.35);
+        box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.35);
       }
       .menu-btn {
         display: none; background: none; border: 1px solid var(--pink-dim);
@@ -127,7 +129,7 @@
       #sidebar.open { transform: translateX(0); }
       .sidebar-header {
         padding: 10px 20px 20px;
-        border-bottom: 1px solid rgba(255,45,149,0.18);
+        border-bottom: 1px solid rgba(var(--accent-rgb), 0.18);
         display: flex; justify-content: space-between; align-items: center;
       }
       .sidebar-close {
@@ -146,13 +148,13 @@
       }
       .sidebar-link:hover {
         color: var(--pink); border-left-color: var(--pink);
-        background: rgba(255,45,149,0.06);
+        background: rgba(var(--accent-rgb), 0.06);
         text-shadow: 0 0 6px var(--pink);
       }
       .sidebar-link i { width: 16px; font-size: 0.85rem; }
       .sidebar-footer {
         padding: 16px 20px;
-        border-top: 1px solid rgba(255,45,149,0.12);
+        border-top: 1px solid rgba(var(--accent-rgb), 0.12);
         font-size: 0.7rem; color: var(--text-dim);
       }
       #overlay {
@@ -180,7 +182,7 @@
       }
       @keyframes pulse-border {
         0%,100% { border-color: var(--pink-dim); box-shadow: none; }
-        50% { border-color: var(--pink); box-shadow: 0 0 12px rgba(255,45,149,0.25); }
+        50% { border-color: var(--pink); box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.25); }
       }
       .status-dot {
         width: 6px; height: 6px; border-radius: 50%;
@@ -194,16 +196,16 @@
         font-family: 'Share Tech Mono', monospace;
         font-size: clamp(1.6rem, 5vw, 3.2rem);
         color: var(--pink);
-        text-shadow: 0 0 20px rgba(255,45,149,0.55), 0 0 40px rgba(255,45,149,0.25);
+        text-shadow: 0 0 20px rgba(var(--accent-rgb), 0.55), 0 0 40px rgba(var(--accent-rgb), 0.25);
         letter-spacing: 4px;
         margin-bottom: 8px;
         animation: glitch 4s infinite;
       }
       @keyframes glitch {
-        0%,96%,100% { text-shadow: 0 0 20px rgba(255,45,149,0.5); transform: none; }
+        0%,96%,100% { text-shadow: 0 0 20px rgba(var(--accent-rgb), 0.5); transform: none; }
         97% { text-shadow: -2px 0 #00e5ff, 2px 0 #ffea00; transform: skewX(-1deg); }
         98% { text-shadow: 2px 0 #00e5ff, -2px 0 #ffea00; transform: skewX(1deg); }
-        99% { text-shadow: 0 0 20px rgba(255,45,149,0.5); transform: none; }
+        99% { text-shadow: 0 0 20px rgba(var(--accent-rgb), 0.5); transform: none; }
       }
       .ascii-sub {
         font-size: 0.75rem; color: var(--pink-dim);
@@ -227,11 +229,11 @@
       }
       .btn-primary {
         background: var(--pink); color: #17000d; font-weight: 700;
-        box-shadow: 0 0 20px rgba(255,45,149,0.35);
+        box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.35);
       }
       .btn-primary:hover {
-        background: #ff59ab;
-        box-shadow: 0 0 30px rgba(255,45,149,0.65);
+        background: var(--pink-hover);
+        box-shadow: 0 0 30px rgba(var(--accent-rgb), 0.65);
         transform: translateY(-2px);
       }
       .btn-outline {
@@ -240,7 +242,7 @@
       }
       .btn-outline:hover {
         border-color: var(--pink); background: var(--pink-glow);
-        box-shadow: 0 0 16px rgba(255,45,149,0.25);
+        box-shadow: 0 0 16px rgba(var(--accent-rgb), 0.25);
         transform: translateY(-2px);
       }
 
@@ -250,16 +252,16 @@
         gap: 12px; max-width: 480px; width: 100%;
       }
       .stat {
-        border: 1px solid rgba(255,45,149,0.18);
+        border: 1px solid rgba(var(--accent-rgb), 0.18);
         padding: 14px 10px; text-align: center;
-        background: rgba(255,45,149,0.04);
+        background: rgba(var(--accent-rgb), 0.04);
         transition: border-color 0.2s, box-shadow 0.2s;
       }
       .stat:hover {
-        border-color: rgba(255,45,149,0.45);
-        box-shadow: 0 0 12px rgba(255,45,149,0.1);
+        border-color: rgba(var(--accent-rgb), 0.45);
+        box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.1);
       }
-      .stat-val { font-size: 1.4rem; font-weight: 700; color: var(--pink); text-shadow: 0 0 10px rgba(255,45,149,0.45); }
+      .stat-val { font-size: 1.4rem; font-weight: 700; color: var(--pink); text-shadow: 0 0 10px rgba(var(--accent-rgb), 0.45); }
       .stat-label { font-size: 0.65rem; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
 
       /* Divider */
@@ -275,7 +277,7 @@
       .section-title {
         font-family: 'Share Tech Mono', monospace;
         font-size: 1.4rem; color: var(--pink);
-        text-shadow: 0 0 10px rgba(255,45,149,0.35);
+        text-shadow: 0 0 10px rgba(var(--accent-rgb), 0.35);
         letter-spacing: 3px; text-transform: uppercase;
         margin-bottom: 8px;
       }
@@ -284,8 +286,8 @@
 
       .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
       .feature-card {
-        border: 1px solid rgba(255,45,149,0.16);
-        padding: 24px; background: rgba(255,45,149,0.03);
+        border: 1px solid rgba(var(--accent-rgb), 0.16);
+        padding: 24px; background: rgba(var(--accent-rgb), 0.03);
         text-decoration: none; color: inherit;
         display: block; transition: all 0.25s;
         position: relative; overflow: hidden;
@@ -297,15 +299,15 @@
       }
       .feature-card:hover::before { height: 100%; }
       .feature-card:hover {
-        border-color: rgba(255,45,149,0.4);
-        box-shadow: 0 0 24px rgba(255,45,149,0.1);
-        background: rgba(255,45,149,0.06);
+        border-color: rgba(var(--accent-rgb), 0.4);
+        box-shadow: 0 0 24px rgba(var(--accent-rgb), 0.1);
+        background: rgba(var(--accent-rgb), 0.06);
         transform: translateY(-4px);
       }
       .card-icon {
         font-size: 1.2rem; color: var(--pink);
         margin-bottom: 14px;
-        text-shadow: 0 0 8px rgba(255,45,149,0.5);
+        text-shadow: 0 0 8px rgba(var(--accent-rgb), 0.5);
       }
       .card-title { font-size: 0.85rem; color: var(--text); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
       .card-desc { font-size: 0.75rem; color: var(--text-dim); line-height: 1.7; }
@@ -314,15 +316,15 @@
       .cta { position: relative; z-index: 10; padding: 80px 20px; text-align: center; }
       .cta-box {
         max-width: 600px; margin: 0 auto;
-        border: 1px solid rgba(255,45,149,0.25);
+        border: 1px solid rgba(var(--accent-rgb), 0.25);
         padding: 48px 32px;
-        background: rgba(255,45,149,0.03);
-        box-shadow: 0 0 40px rgba(255,45,149,0.08);
+        background: rgba(var(--accent-rgb), 0.03);
+        box-shadow: 0 0 40px rgba(var(--accent-rgb), 0.08);
       }
       .cta-title {
         font-family: 'Share Tech Mono', monospace;
         font-size: 1.6rem; color: var(--pink);
-        text-shadow: 0 0 15px rgba(255,45,149,0.45);
+        text-shadow: 0 0 15px rgba(var(--accent-rgb), 0.45);
         letter-spacing: 2px; margin-bottom: 16px;
       }
       .cta-desc { font-size: 0.8rem; color: var(--text-dim); line-height: 1.8; margin-bottom: 32px; }
@@ -337,6 +339,8 @@
       /* Cursor blink on title */
       .cursor { animation: blink 1s step-end infinite; }
     </style>
+    <link rel="stylesheet" href="/site-controls.css">
+    <script src="/site-controls.js" defer></script>
   </head>
   <body>
     <div id="bg-overlay"></div>

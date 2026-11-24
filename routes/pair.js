@@ -13,6 +13,7 @@ const path = require('path');
 let router = express.Router();
 const pino = require("pino");
 const { sendButtons } = require('gifted-btns');
+const { requestPairingCodeWhenReady } = require('./pairingCode');
 const {
     default: giftedConnect,
     useMultiFileAuthState,
@@ -64,8 +65,10 @@ router.get('/', async (req, res) => {
         const { version } = await fetchLatestBaileysVersion();
         console.log(version);
         const { state, saveCreds } = await useMultiFileAuthState(path.join(sessionDir, id));
+        let Gifted = null;
+        let pairingFailed = false;
         try {
-            let Gifted = giftedConnect({
+            Gifted = giftedConnect({
                 version,
                 auth: {
                     creds: state.creds,
@@ -82,16 +85,6 @@ router.get('/', async (req, res) => {
                 connectTimeoutMs: 60000,
                 keepAliveIntervalMs: 30000
             });
-
-            if (!Gifted.authState.creds.registered) {
-                await delay(1500);
-                num = num.replace(/[^0-9]/g, '');
-                const code = await Gifted.requestPairingCode(num);
-                if (!responseSent && !res.headersSent) {
-                    res.json({ code: code, fallback: sessionType === 'short' && !isConfigured() });
-                    responseSent = true;
-                }
-            }
 
             Gifted.ev.on('creds.update', saveCreds);
             Gifted.ev.on("connection.update", async (s) => {
@@ -185,18 +178,32 @@ router.get('/', async (req, res) => {
                         await cleanUpSession();
                     }
 
-                } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output?.statusCode != 401) {
-                    console.log("Reconnecting...");
-                    await delay(5000);
-                    GIFTED_PAIR_CODE();
+                } else if (connection === "close" && responseSent && !pairingFailed && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output?.statusCode != 401) {
+                    console.warn("[PAIR] Socket closed after code delivery; request a fresh code instead of silently replacing the displayed code.");
+                    await cleanUpSession();
                 }
             });
 
+            if (!Gifted.authState.creds.registered) {
+                const code = await requestPairingCodeWhenReady(Gifted, num);
+                if (!responseSent && !res.headersSent) {
+                    res.json({ code, fallback: sessionType === 'short' && !isConfigured() });
+                    responseSent = true;
+                }
+            }
         } catch (err) {
+            pairingFailed = true;
             console.error("Main error:", err);
             if (!responseSent && !res.headersSent) {
-                res.status(500).json({ code: "Service is Currently Unavailable" });
+                res.status(503).json({ code: "Service is Currently Unavailable" });
                 responseSent = true;
+            }
+            if (Gifted?.ws?.close) {
+                try {
+                    await Gifted.ws.close();
+                } catch (closeError) {
+                    console.warn("Pairing socket close failed.", closeError?.message || closeError);
+                }
             }
             await cleanUpSession();
         }
@@ -208,7 +215,7 @@ router.get('/', async (req, res) => {
         console.error("Final error:", finalError);
         await cleanUpSession();
         if (!responseSent && !res.headersSent) {
-            res.status(500).json({ code: "Service Error" });
+            res.status(503).json({ code: "Service Error" });
         }
     }
 });
